@@ -7,36 +7,34 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 
 void main() {
 	float x1, y1, r1, x2, y2, r2, L;
 
-	printf("Enter the coordinates of the first circle to the third decimal place: x1, y1\nThe remaining decimal places will be discarded.\n");
+	//Ввод данных первой окружности
+	printf("Enter the coordinates of the first circle: x1, y1\n");
 	scanf("%f%f", &x1, &y1);
-	x1 = (floor(x1 * 1000)) / 1000;	//Округеление x1 до третьего знака после запятой
-	y1 = (floor(y1 * 1000)) / 1000;	//Округеление y1 до третьего знака после запятой
 
-	printf("Enter the radius of the first circle to the third decimal place: r1\nThe remaining decimal places will be discarded.\n");
+	printf("Enter the radius of the first circle: r1\n");
 	scanf("%f", &r1);
 	if (r1 <= 0) {
 		printf("Incorrect input\n");
 		return(-1);
 	}
-	r1 = (floor(r1 * 1000)) / 1000;	//Округеление r1 до третьего знака после запятой
 
-	printf("Enter the coordinates of the second circle to the third decimal place: x2, y2\nThe remaining decimal places will be discarded.\n");
+	//Ввод данных второй окружности
+	printf("Enter the coordinates of the second circle: x2, y2\n");
 	scanf("%f%f", &x2, &y2);
-	x2 = (floor(x2 * 1000)) / 1000;	//Округеление x2 до третьего знака после запятой
-	y2 = (floor(y2 * 1000)) / 1000;	//Округеление y2 до третьего знака после запятой
 
-	printf("Enter the radius of the second circle to the third decimal place: r2\nThe remaining decimal places will be discarded.\n");
+	printf("Enter the radius of the second circle: r2\n");
 	scanf("%f", &r2);
 	if (r2 <= 0) {
 		printf("Incorrect input\n");
 		return(-1);
 	}
-	r2 = (floor(r2 * 1000)) / 1000;	//Округеление r2 до третьего знака после запятой
 
+	//Расчёт расстояния между центрами окружностей
 	L = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	
 	if (L > fmax(r1, r2)) {
@@ -50,7 +48,7 @@ void main() {
 			printf("Circles touch\n");
 		}
 	}
-	else if ((L == 0) & (r1 == r2)) {
+	else if ((L < DBL_EPSILON) && (fabs(r1 - r2) < DBL_EPSILON)) {
 		printf("Circles match\n");
 	}
 	else if (L < fmax(r1, r2)) {
