@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lab0.okr", "lab0.okr\lab0.okr.vcxproj", "{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Debug|x64.ActiveCfg = Debug|x64
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Debug|x64.Build.0 = Debug|x64
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Debug|x86.ActiveCfg = Debug|Win32
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Debug|x86.Build.0 = Debug|Win32
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Release|x64.ActiveCfg = Release|x64
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Release|x64.Build.0 = Release|x64
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Release|x86.ActiveCfg = Release|Win32
+		{6AE5A350-7801-4D6D-ACFA-9FEC5A0F06DC}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {502D9938-8DEC-4329-86FD-79CC38752DE4}
+	EndGlobalSection
+EndGlobal
