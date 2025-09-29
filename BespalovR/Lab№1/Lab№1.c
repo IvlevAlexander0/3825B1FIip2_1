@@ -111,4 +111,7 @@ void main() {
 			}
 		}
 	}
+	else {
+		printf("No piece can reach that position in one move.\n");
+	}
 }
