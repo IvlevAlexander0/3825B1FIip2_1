@@ -1,89 +1,49 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <math.h>
 
 
 void main() {
-
-	srand(time(NULL));
-
-	char v;
-	int count = 0;
+	printf("Hello, it is a cabinet Weight Calculator \n");
+	float h, w, d;
+	float const tol_stenki = 0.5f;
+	float const tol_bok = 1.5f;
+	float const tol_nakl = 1.5f;
+	float const tol_dveri = 1.0f;
+	float const tol_polk = 0.5f;
+	float const plotnost_dsp = 0.55f;
+	float const plotnost_dvp = 0.95f;
+	float const plotnost_dereva = 0.54f;
 	char fl = '0';
-	
-	while (1) {
-		printf("Select the mode(1 or 2)\n");
-		scanf(" %c", &v);
-		if (v == '1' || v == '2') {
-			break;
-		}
-		fl = '1';
+
+	do {
 		if (fl == '1') {
-			printf("Input error. Try again!");
+			printf("Input error. Try again. \n");
 		}
+
+		printf("Enter h (180-220):\n");
+		scanf("%f", &h);
+
+		printf("Enter w (80-120):\n");
+		scanf("%f", &w);
+
+		printf("Enter d (50-90):\n");
+		scanf("%f", &d);
+		fl = '1';
+	} while (h < 180 || h > 220 || w < 80 || w > 120 || d < 50 || d > 90);
+
+	double mas_zad = plotnost_dvp * h * w * tol_stenki;
+	double mas_bok = 2 * plotnost_dsp * d * tol_bok * h;
+	double mas_nakl = 2 * plotnost_dsp * w * d * tol_nakl;
+	double mas_dveri = plotnost_dereva * h * w * tol_dveri;
+
+	int count_polk = 0;
+	float h1 = 0.0f;
+	while (h >= h1 + 40.5f) {
+		count_polk++;
+		h1 += 40.5f;
 	}
-	int pol;
-	if (v == '1') {
-		int ran = rand() % 1000 + 1;
-		do {
-			printf("Enter number: \n");
-			scanf(" %d", &pol);
-			if (ran < pol) {
-				printf("Number is less \n");
-			}
-			else if (ran > pol) {
-				printf("Number is greater \n");
-			}
-			count += 1;
-
-		} while (pol != ran);
-		printf("You guessed right \n");
-	}
-	else {
-		printf("Guess a number from 1 to 1000 \n");
-		int left = 1;
-		int right = 1000;
-		char osenka;
-		int prog = rand() % (right - left) + left;
-		
-		
-		do {
-			printf("Number programm = %d \n", prog);
-			printf("Rate number\n");
-
-			while (1) {
-				scanf(" %c", &osenka);
-				if (osenka == '<' || osenka == '>' || osenka == '=') {
-					fl = '0';
-					break;
-				}
-				fl = '2';
-				if (fl == '2') {
-					printf("Input error. Try again!");
-				}
-			}
-			
-			if (osenka == '>') {
-				left = prog + 1;
-			}
-			else if (osenka == '<') {
-				right = prog - 1;
-			}
-
-			count += 1;
-
-			if (left > right) {
-				printf("Error answers! Try again.\n");
-				left = 1;
-				right = 1000;
-				count = 0;
-			}
-			prog = rand() % (right - left) + left;
-			
-		} while (osenka != '=');
-		printf("Programm guessed right \n");
-	}
-	printf("Number of attempts: %d", count);
-
+	double mas_polk = count_polk * plotnost_dsp * tol_polk * w * d;
+	double ms = mas_bok + mas_dveri + mas_nakl + mas_polk + mas_zad;
+	printf("Finish massa: %lf kg", ms / 1000.0);
 }
