@@ -71,7 +71,7 @@ void main() {
 
 			printf("Is your number %d? Print </=/> if your number is less/equal/higher.\n", guess);
 
-			while ( (c = getchar()) > 62 || c  < 60 ) {}
+			while ((c = getchar()) != "<" && c != ">" && c != "=") {}
 
 			if ( c == 60 && guess < Upper_Border) {
 				Upper_Border = guess;
