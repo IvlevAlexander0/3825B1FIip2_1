@@ -114,11 +114,6 @@ unsigned char isStringEqual(unsigned char str_1[], unsigned char str_2[]) {
 	return 1;
 }
 
-//FIX IT:
-//user_ans_format : "123  ";
-//generate_num_format: "  123"
-
-
 void main() {
 	srand(time(0));
 
@@ -127,11 +122,12 @@ void main() {
 	unsigned short length = enterLength();
 
 	generateNumber(guessing_number, length);
+	enterNumber(user_answer, length);
+	printf("Cows: %d | Bulls: %d\n", getCowCount(user_answer, guessing_number), getBullCount(user_answer, guessing_number));
 
-	do 
-	{
+	while (!isStringEqual(user_answer, guessing_number)) {
 		enterNumber(user_answer, length);
 		printf("Cows: %d | Bulls: %d\n", getCowCount(user_answer, guessing_number), getBullCount(user_answer, guessing_number));
-	} while (!isStringEqual(user_answer, guessing_number));
+	}
 	printf("You're damn right");
 }
