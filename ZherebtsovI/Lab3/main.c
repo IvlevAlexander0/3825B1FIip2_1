@@ -25,15 +25,18 @@ unsigned short enterLength() {
 char isCorrectNumber(unsigned char number[], unsigned short length) {
 	unsigned char digits_count[10] = { 0 };
 
-	for (size_t i = 0; i < length; ++i) {
-		char digit = number[i] - '0';
-		if (digit >= 0) {
+	for (size_t i = 0; number[i] != '\0'; ++i) {
+		unsigned char digit = number[i] - '0';
+		if (digit >= 0 && digit <= 9) {
 			if (digits_count != 1) {
 				digits_count[digit] = 1;
 			}
 			else {
 				return 0;
 			}
+		}
+		else {
+			return 0;
 		}
 	}
 
@@ -124,7 +127,7 @@ void main() {
 	enterNumber(user_answer, length);
 	printf("Cows: %d | Bulls: %d\n", getCowCount(user_answer, guessing_number), getBullCount(user_answer, guessing_number));
 
-	while (!isStringEqual(guessing_number, user_answer)) {
+	while (!isStringEqual(user_answer, guessing_number)) {
 		enterNumber(user_answer, length);
 		printf("Cows: %d | Bulls: %d\n", getCowCount(user_answer, guessing_number), getBullCount(user_answer, guessing_number));
 	}
