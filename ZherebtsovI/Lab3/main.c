@@ -124,7 +124,7 @@ void main() {
 	enterNumber(user_answer, length);
 	printf("Cows: %d | Bulls: %d\n", getCowCount(user_answer, guessing_number), getBullCount(user_answer, guessing_number));
 
-	while (!isStringEqual(user_answer, guessing_number)) {
+	while (!isStringEqual(guessing_number, user_answer)) {
 		enterNumber(user_answer, length);
 		printf("Cows: %d | Bulls: %d\n", getCowCount(user_answer, guessing_number), getBullCount(user_answer, guessing_number));
 	}
