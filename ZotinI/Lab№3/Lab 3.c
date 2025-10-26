@@ -9,11 +9,19 @@ void main() {
 	srand(time(NULL));
 	while (1) {
 		printf("Enter n (2-5): \n");
-		if (scanf(" %d", &n) == 1 && n > 1 && n < 6) {
-			break;
+		if (scanf("%d", &n) == 1 && n > 1 && n < 6) {
+			int cled = getchar();
+			if (cled == '\n') {
+				break;
+			}
+			else {
+				printf("The number must be an integer.\n");
+				while (getchar() != '\n');
+			}
 		}
 		else {
-			printf("Input error. Try again!"); 
+			printf("Input error. Try again!\n"); 
+			while (getchar() != '\n');
 		}
 	}
 	int right = pow(10, n);
@@ -54,30 +62,47 @@ void main() {
 	do {
 		printf("Enter number length %d: \n", n);
 		while (1) {
-			if (scanf(" %d", &pol) == 1 && pol > left && pol < right) {
-				for (int j = n - 1; j >= 0; j--) {
-					mas_pol[j] = pol % 10;
-					pol/= 10;
-				}
-				int un = 1;
-				for (int i = 0; i < n - 1 && un; i++) {
-					for (int j = i + 1; j < n; j++) {
-						if (mas_pol[i] == mas_pol[j]) {
-							un = 0;
+			if (scanf("%d", &pol) == 1) {
+				int cled = getchar();
+				if (cled == '\n') {
+					if (pol >= left && pol < right) {
+						int save_pol = pol;
+						int valid = 1;
+
+						for (int j = n - 1; j >= 0; j--) {
+							mas_pol[j] = save_pol % 10;
+							save_pol /= 10;
+						}
+
+						int un = 1;
+						for (int i = 0; i < n - 1 && un; i++) {
+							for (int j = i + 1; j < n; j++) {
+								if (mas_pol[i] == mas_pol[j]) {
+									un = 0;
+									break;
+								}
+							}
+						}
+
+						if (un) {
 							break;
 						}
+						else {
+							printf("The number must contain non-repeating elements. Try again!\n");
+						}
+					}
+					else {
+						printf("Number must have exactly %d digits. Try again!\n", n);
 					}
 				}
-
-				if (un) {
-					break;
-				}
 				else {
-					printf("The number must contain non-repeating elements. Try again!\n");
+					printf("The number must be an integer.\n");
+					while (getchar() != '\n');
 				}
 			}
 			else {
 				printf("Input error. Try again!\n");
+				while (getchar() != '\n');
 			}
 		}
 
@@ -97,8 +122,8 @@ void main() {
 			}
 		}
 
-		printf("Count bukov = %d \n", buk);
-		printf("Count korov = %d \n", kor);
+		printf("Bulls  = %d \n", buk);
+		printf("Cows = %d \n", kor);
 	} while (buk != n);
 	printf("You guessed the number \n");
 
