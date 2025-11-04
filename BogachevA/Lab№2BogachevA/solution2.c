@@ -13,6 +13,7 @@ int main() {
 	while ((scanf("%u", &n) != 1 || (n > 2) || (n < 1))) {
 		char c;
 		while ((c = getchar()) != '\n' && c != EOF) {};
+		printf("incorrect enter")
 	}
 
 	if (n == 1) {
@@ -22,6 +23,7 @@ int main() {
 			while ((scanf("%d", &y) != 1 || (y > 1000) || (y < 1))) {
 				char d;
 				while ((d = getchar()) != '\n' && d != EOF) {};
+				printf("incorrect enter")
 			}
 			if (y > x) {
 				printf("The hidden number is less\n");
@@ -35,7 +37,7 @@ int main() {
 
 			else if (y == x) {
 				nt++;
-				printf("gratz\tnumber of attepmts %u\n", nt);
+				printf("gratz number of attepmts %u\n", nt);
 				break;
 			}
 		}
