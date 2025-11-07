@@ -1,23 +1,32 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-void main() 
+void main()
 {
 	printf("enter the size for the desired number. the correct values are from 2 to 5\n");
-	char n1;
-	while (1)
+	int n;
+	int valid = 0;
+	while (valid == 0)
 	{
-		scanf("%c", &n1);
-		if (((int)n1 >= 50) && ((int)n1 <= 53))
+		if (scanf("%d", &n) == 1)
 		{
-			break;
+			if (n >= 2 && n <= 5)
+			{
+				valid = 1;
+			}
+			else
+			{
+				printf("incorrect input\n");
+			}
 		}
-		printf("incorrect\n");
+		else
+		{
+			printf("incorrect input\n");
+		}
 		while (getchar() != '\n');
 	}
-	int n = (int)n1 - 48;
 
 	srand(time(NULL));
 	int q[5];
@@ -41,7 +50,11 @@ void main()
 	do
 	{
 		int an;
-		scanf("%d", &an);
+		if (scanf("%d", &an) != 1) {
+			printf("incorrect type\n");
+			while (getchar() != '\n');
+			continue;
+		}
 		int k = 0;
 		int t = n;
 		int ant = an;
@@ -65,7 +78,7 @@ void main()
 				}
 			}
 		}
-		for (int i = 0; i < n; ++i)
+		for (int i = 0; i < n-1; ++i)
 		{
 			if (an1[i] == an1[i + 1])
 			{
@@ -74,11 +87,10 @@ void main()
 		}
 		if (!((an >= 10) && (an <= 99999) && (an / pow(10, n - 1) >= 1) && (an / pow(10, n - 1) <= 10) && (k == 0)))
 		{
-			printf("incorrect\n");
+			printf("incorrect value\n");
 			continue;
 		}
 		k = 0;
-		while (getchar() != '\n');
 		int c = n;
 		int a[5];
 		for (int i = 0; i < n; ++i)
