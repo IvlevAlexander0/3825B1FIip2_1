@@ -10,10 +10,10 @@ void clearInputBuffer() {
 
 
 typedef struct {
-    char code[5];        
-    char name[50];    
-    int price;         
-    int sale; 
+    char code[5];
+    char name[50];
+    int price;
+    int sale;
 } Product;
 
 
@@ -34,7 +34,7 @@ void printCashCheck(CashCheck check) {
     printf("\nCashCheck:\n\n");
     int totalCashCheckPriceWithSale = 0;
     int totalCashCheckPriceWithoutSale = 0;
-    
+
     for (int i = 0; i < check.currentCashCheckMembersCount; ++i)
     {
         int productPriceWithSale = check.product[i].price * (100 - check.product[i].sale) / 100;
@@ -47,7 +47,7 @@ void printCashCheck(CashCheck check) {
 
     printf("The total cost of the product: %d\n", totalCashCheckPriceWithoutSale);
     printf("Total discount: %d\n", totalCashCheckPriceWithoutSale - totalCashCheckPriceWithSale);
-    printf("Total amount to be paid: %d\n\n", totalCashCheckPriceWithSale );
+    printf("Total amount to be paid: %d\n\n", totalCashCheckPriceWithSale);
 }
 
 
@@ -66,49 +66,67 @@ int checkProductCode(char code[]) {
             return 0;
         }
     }
-    
+
     return 1;
+}
+
+int checkExistenceCode(char code[], Product* curProd, int prodCount) {
+    if (findProductByCode(curProd, prodCount, code) != -1)
+    {
+        printf("Product with this code already exists\n");
+        return 1;
+    }
+    return 0;
 }
 
 
 int findProductByCode(Product* products, int currentProductCount, char inputCode[]) {
     int isEqual = 1;
     int productNum = -1;
-    
-    for (int i = 0; i < currentProductCount; ++i) {
+
+    for (int i = 0; i < currentProductCount; ++i)
+    {
         isEqual = 1;
-        for (int j = 0; j < 4; ++j) {
-            if (inputCode[j] != products[i].code[j]) {
+        for (int j = 0; j < 4; ++j)
+        {
+            if (inputCode[j] != products[i].code[j])
+            {
                 isEqual = 0;
                 break;
             }
         }
 
-        if (isEqual == 1) {
+        if (isEqual == 1)
+        {
             productNum = i;
             break;
         }
     }
-    
+
     return productNum;
 }
 
 
-Product addProduct() {
+Product addProduct(Product* products, int currentProductCount) {
     Product userProduct;
+    char userProductCode[6];
 
     printf("Enter the code (4 numbers)\n");
-    scanf("%4s", &userProduct.code);
+    scanf("%5s", &userProductCode);
 
-    int isCodeCorrect = checkProductCode(userProduct.code);
+    int isCodeCorrect = checkProductCode(userProductCode);
+    int isCodeExist = checkExistenceCode(userProductCode, products, currentProductCount);
 
-    while (!isCodeCorrect)
+    while (!isCodeCorrect || isCodeExist)
     {
         printf("Enter the code (4 numbers)\n");
         clearInputBuffer();
-        scanf("%4s", &userProduct.code);
-        isCodeCorrect = checkProductCode(userProduct.code);
+        scanf("%5s", &userProductCode);
+        isCodeCorrect = checkProductCode(userProductCode);
+        isCodeExist = checkExistenceCode(userProductCode, products, currentProductCount);
     }
+
+    strcpy(userProduct.code, userProductCode);
 
     printf("Enter the product name\n");
     clearInputBuffer();
@@ -124,7 +142,8 @@ Product addProduct() {
     clearInputBuffer();
     scanf("%d", &userProduct.sale);
 
-    while (userProduct.sale < 1 || userProduct.sale  > 50) {
+    while (userProduct.sale < 1 || userProduct.sale  > 50)
+    {
         printf("Error. The discount must be between 1 and 50\n");
         clearInputBuffer();
         scanf("%d", &userProduct.sale);
@@ -134,10 +153,10 @@ Product addProduct() {
 }
 
 
-void scanProduct(Product *products, int currentProductCount) {
-    char inputCode[5];
+void scanProduct(Product* products, int currentProductCount) {
+    char inputCode[6];
     printf("Enter the code (4 numbers)\n");
-    scanf("%4s", &inputCode);
+    scanf("%5s", &inputCode);
 
     int isCodeCorrect = checkProductCode(inputCode);
 
@@ -145,27 +164,27 @@ void scanProduct(Product *products, int currentProductCount) {
     {
         printf("Enter the code (4 numbers)\n");
         clearInputBuffer();
-        scanf("%4s", &inputCode);
+        scanf("%5s", &inputCode);
         isCodeCorrect = checkProductCode(inputCode);
     }
 
     int productNum = findProductByCode(products, currentProductCount, &inputCode);
-    
-    if (productNum != -1) {
+
+    if (productNum != -1)
+    {
         printProductInfo(products[productNum]);
     }
-    else
-    {
+    else {
         printf("Product with code %s not found\n", inputCode);
     }
 }
 
 
 CashCheck addProductToCashCheck(Product* products, int currentProductCount, CashCheck check) {
-    char inputCode[5];
+    char inputCode[6];
     printf("Enter the product code\n");
     clearInputBuffer();
-    scanf("%4s", &inputCode);
+    scanf("%5s", &inputCode);
 
     int isCodeCorrect = checkProductCode(inputCode);
 
@@ -173,15 +192,15 @@ CashCheck addProductToCashCheck(Product* products, int currentProductCount, Cash
     {
         printf("Enter the code (4 numbers)\n");
         clearInputBuffer();
-        scanf("%4s", &inputCode);
+        scanf("%5s", &inputCode);
         isCodeCorrect = checkProductCode(inputCode);
     }
 
-  
+
     int productNum = findProductByCode(products, currentProductCount, &inputCode);
 
     int productInCheckNum = findProductByCode(check.product, check.currentCashCheckMembersCount, &inputCode);
-   
+
     if (productNum != -1) {
         if (productInCheckNum != -1)
         {
@@ -198,7 +217,7 @@ CashCheck addProductToCashCheck(Product* products, int currentProductCount, Cash
     {
         printf("Product with code %s not found\n", inputCode);
     }
-    
+
     return check;
 }
 
@@ -243,7 +262,7 @@ int main() {
             return 0;
         case 1:
         {
-            products[currentProductCount] = addProduct();
+            products[currentProductCount] = addProduct(products, currentProductCount);
             currentProductCount++;
             break;
         }
