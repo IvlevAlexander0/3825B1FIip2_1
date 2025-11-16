@@ -13,7 +13,7 @@ int main() {
 	while ((scanf("%u", &n) != 1 || (n > 2) || (n < 1))) {
 		char c;
 		while ((c = getchar()) != '\n' && c != EOF) {};
-		printf("incorrect enter")
+		printf("incorrect enter");
 	}
 
 	if (n == 1) {
@@ -23,7 +23,7 @@ int main() {
 			while ((scanf("%d", &y) != 1 || (y > 1000) || (y < 1))) {
 				char d;
 				while ((d = getchar()) != '\n' && d != EOF) {};
-				printf("incorrect enter")
+				printf("incorrect enter");
 			}
 			if (y > x) {
 				printf("The hidden number is less\n");
@@ -45,13 +45,13 @@ int main() {
 	if (n == 2) {
 		printf("guess the number from 1 to 1000 and use '<>=' to help me!\n");
 		do {
-			ch = y + rand() % (x - y + 1);
+			ch = (x + y) / 2;
 			nt++;
 			printf("U guessed %d, am I right?\n", ch);
 			while (getchar() != '\n') {};
 			scanf("%c", &z);
 			if (z == '>') {
-				y = ch + 1;
+				y = ch+1;
 			}
 			else if (z == '<') {
 				x = ch - 1;
