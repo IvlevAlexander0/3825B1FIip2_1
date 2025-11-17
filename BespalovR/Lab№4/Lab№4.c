@@ -1,136 +1,153 @@
 #define _CRT_SECURE_NO_WARNINGS
-#define DESCRIPTION_LENGTH 128
-#define BARCODE_LENGTH 4
-#define ITEM_AMOUNT 5
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-void options_menu() {
-    printf("-------------------------------------------\n");
-    printf("\nSelect option:\n\n");
-    printf("1.Add description to the item.\n");
-    printf("2.Scan an item and output it's description.\n");
-    printf("3.Scan an item and add it to the receipt.\n");
-    printf("4.See receipt.\n");
-    printf("5.Get receipt.\n\n");
-} 
-void item_menu() {
-    printf("-------------------------------------------\n");
-    printf("\nSelect an item:\n\n");
-    printf("1.Apple.\n");
-    printf("2.Banana.\n");
-    printf("3.Cherry.\n");
-    printf("4.Doughnut.\n");
-    printf("5.Eggplant.\n\n");
-}
-int input_5(int input) {
-    while (scanf("%d", &input) == 0 || input > 5 || input < 1) {
-        printf("Incorrect input. Please try again.\n");
-        char c;
-        while ((c = getchar()) != '\n') {}
+int main(){
+
+
+    int  amount  = 5;
+    int* discount=calloc(amount,sizeof(int)) ;
+    int* quantity=calloc(amount,sizeof(int)) ;
+    int* barcode =calloc(amount,sizeof(int)) ;
+    int* price   =calloc(amount,sizeof(int)) ;
+    char** names =calloc(amount,sizeof(char *));
+    names[0] = strdup("Apples");
+    names[1] = strdup("Butter");
+    names[2] = strdup("Cheese");
+    names[3] = strdup("Donuts");
+    names[4] = strdup(" Eggs ");
+    for ( int i = 0; i < amount ; ++ i){
+        barcode[i] = 1111 * (i+1);
+        quantity[i] = 0;
+        price[i] = rand()%1000;
+        discount[i] = 1 + rand()%50;
     }
-    return input;
-}
-int main() {
-    srand(time(NULL));
-    int cart[ITEM_AMOUNT] = { 0 };
-    int price[ITEM_AMOUNT];
-    float discount[ITEM_AMOUNT];
-    int barcode[ITEM_AMOUNT][BARCODE_LENGTH] ;
-    char description[ITEM_AMOUNT][DESCRIPTION_LENGTH] = { 0 };
-    for ( int i = 0; i < ITEM_AMOUNT; ++i) {
-        discount[i] = rand() % 51 / 100.;
-        price[i] = 1 + rand() % 1000;
-        for (int j = 0; j < BARCODE_LENGTH; ++j) {
-            barcode[i][j] = rand() % 10;
-        }
-    }
-    int option = 0;
-    int toggle = 0;
     char c;
-    int t1 = 0;
-    float t2 = 0;
-    int t22 = 1;
-    int t3 = 0;
-    int i; 
-    for (;;) {
-        if (toggle == 2 ) {
+    int t;
+    int t1;
+    int t11;
+    int t2;
+    int option;
+    char name[32];
+
+
+    for (;;){
+
+
+        if ( option == -1 ){
+            option = 0 ;
+            for ( int i = 0 ; i < amount ; ++ i){
+                quantity[i] = 0 ;
+            }
+        }
+        else if (option == -2){
             break;
         }
-        else if (toggle == 1) {
-            cart[0] = cart[1] = cart[2] = cart[3] = cart[4] = 0;
+        t = t1 = t11 = t2 = 0;
+        printf("\nChoose option : \n1.Add new item to the system.\n2.Show item's info.\n3.Add item to the cart.\n4.Show cart.\n5.Get cheque.\n");
+        while ( scanf("%d", &option ) != 1 || option > 5 || option < 1 ) {
+            printf("Incorrect input, please try again.\n");
+            while ( ( c = getchar() ) != "\n" ){}
         }
-        options_menu();
-        option = input_5(option);
 
-        switch (option) {
 
-        case 1:
+        switch(option){
 
-            item_menu();
-            option = input_5(option) - 1;
-            printf("Input item's description.\n");
-            while ((c = getchar()) != '\n') {}
-            for (i = 0; (description[option][i] = getchar()) != '\n'; ++i);
-            description[option][i] = '\0';
-            break;
 
-        case 2:
-            item_menu();
-            option = input_5(option) - 1;
-            printf("-------------------------------------------\n");
-            printf("\nPrice: %d\n", price[option]);
-            printf("Discount: %.2f\n", discount[option]);
-            printf("Barcode: %d%d%d%d\n", barcode[option][0], barcode[option][1], barcode[option][2], barcode[option][3]);
-            printf("Amount in the cart: %d\n", cart[option]);
-            printf("Description: %s\n", description[option]);
-            break;
-
-        case 3:
-            item_menu();
-            option = input_5(option) - 1;
-            cart[option] += 1;
-            break;
-
-        case 4:
-            printf("-------------------------------------------\n");
-            printf("Receipt:\n");
-            printf("\nApples:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[0], cart[0], discount[0], (int)(price[0] * cart[0] * discount[0]));
-            printf("\nBananas:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[1], cart[1], discount[1], (int)(price[1] * cart[1] * discount[1]));
-            printf("\nCherries:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[2], cart[2], discount[2], (int)(price[2] * cart[2] * discount[2]));
-            printf("\nDoughnuts:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[3], cart[3], discount[3], (int)(price[3] * cart[3] * discount[3]));
-            printf("\nEggplants:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[4], cart[4], discount[4], (int)(price[4] * cart[4] * discount[4]));
-            for (i = 0; i < ITEM_AMOUNT; ++i) {
-                t1 += price[i] * cart[i];
-                t2 += discount[i] * cart[i];
-                t22 += cart[i];
-                t3 += (int)(price[i] * cart[i] * discount[i]);
+            case 1:
+            printf("Input new item's barcode.(4 digits max. 13 is equal to 0013 barcode)\n");
+            while ( scanf("%d", &t) != 1  || t > 9999 || t < 0){
+                printf("Incorrect input, please try again.\n");
+                while ( ( c = getchar() ) != "\n" ){}
             }
-            printf("\nTotal cost without discount : %d | Total disount: %.2f | Total cost with discount %d\n", t1, (t2 / t22) , t3);
-            t1 = t2 = t22 = t3 = 0;
+            for ( int i = 0 ; i < amount ; ++i ){
+                if ( t == barcode[i]){
+                    t = -1;
+                }
+            }
+            if ( t == -1 ){
+                printf("Incorrect barcode.\n");
+                continue;
+            }
+            ++amount;
+            discount = realloc(discount,amount * sizeof(int));
+            quantity = realloc(quantity,amount * sizeof(int));
+            barcode =  realloc(barcode ,amount * sizeof(int));
+            price =    realloc(price   ,amount * sizeof(int));
+            names =    realloc(names   ,amount * sizeof(char *));
+            printf("Input new item's name, price and discount%%.");
+            while ( scanf("%s%d%d", name, &price[amount-1], &discount[amount-1] ) != 3 || price[amount-1] < 1 || discount[amount-1] > 50 || discount[amount-1] < 1 ){
+                printf("Incorrect input, please try again.\n");
+                while ( ( c = getchar() ) != "\n" ){}
+            }
+            names[amount-1] = strdup(name);
+            barcode[amount-1] = t;
             break;
 
-        case 5:
-            printf("-------------------------------------------\n");
-            printf("Receipt:\n");
-            printf("\nApples:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[0], cart[0], discount[0], (int)(price[0] * cart[0] * discount[0]));
-            printf("\nBananas:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[1], cart[1], discount[1], (int)(price[1] * cart[1] * discount[1]));
-            printf("\nCherries:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[2], cart[2], discount[2], (int)(price[2] * cart[2] * discount[2]));
-            printf("\nDoughnuts:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[3], cart[3], discount[3], (int)(price[3] * cart[3] * discount[3]));
-            printf("\nEggplants:\nPrice %d | Amount X%d | Discount %.2f | Total %d\n", price[4], cart[4], discount[4], (int)(price[4] * cart[4] * discount[4]));
-            for (i = 0; i < ITEM_AMOUNT; ++i) {
-                t1 += price[i] * cart[i];
-                t2 += discount[i] * cart[i];
-                t22 += cart[i];
-                t3 += (int)(price[i] * cart[i] * discount[i]);
+
+            case 2:
+            printf("Choose item:\n");
+            for ( int i = 0 ; i < amount ; ++i){
+                printf("%d - %s\n", i+1, names[i] );
             }
-            printf("\nTotal cost without discount : %d | Total disount: %.2f | Total cost with discount %d\n", t1, (t2 / t22), t3);
-            t1 = t2 = t3 = 0;
-            printf("Would you like to start a new receipt?( 1 - Yes / 2 - No )\n");
-            while (scanf("%d", &toggle) == 0 || toggle > 2 || toggle < 1) {
-                printf("Incorrect input. Please try again.\n");
-                char c;
-                while ((c = getchar()) != '\n') {}
+            while ( scanf("%d", &option) != 1  || option > amount || option < 1){
+                printf("Incorrect input, please try again.\n");
+                while ( ( c = getchar() ) != "\n" ){}
+            }
+            printf("\n Name  - price - quantity - discount - barcode\n%s\t%d\t%d\t%d%%\t%.4d\n",names[option -1],price[option -1],quantity[option -1],discount[option -1],barcode[option -1]);
+            break;
+
+
+            case 3:
+            printf("Choose item:\n");
+            for ( int i = 0 ; i < amount ; ++i){
+                printf("%d - %s\n", i+1, names[i] );
+            }
+            while ( scanf("%d", &option) != 1  || option > amount || option < 1){
+                printf("Incorrect input, please try again.\n");
+                while ( ( c = getchar() ) != "\n" ){}
+            }
+            ++quantity[option];
+            break;
+
+
+            case 4:
+            printf("\n Name  - price - quantity - discount - total\n");
+            for ( int i = 0; i < amount ; ++i ){
+                t  += price[i] * quantity[i];
+                t1 +=discount[i] * quantity[i];
+                t11+= quantity[i];
+                t2 +=price[i]*quantity[i]*( 100 - discount[i])/100;
+                printf("%s -  %d  -     %d    -   %d%%    -   %d\n", names[i], price[i],quantity[i],discount[i],price[i]*quantity[i]*( 100 - discount[i])/100);
+            }
+            if (t11!=0){
+                printf("\nTo pay without discount: %d\nAverage discount: %d%%\nTo pay: %d\n", t, t1/t11,t2);
+            }
+            else{
+                printf("\nTo pay without discount: %d\nAverage discount: %d%%\nTo pay: %d\n", t, t1/(t1+1),t2);
+            }
+            break;
+
+
+            case 5:
+            printf("\n Name  - price - quantity - discount - total\n");
+            for ( int i = 0; i < amount ; ++i ){
+                t  += price[i] * quantity[i];
+                t1 +=discount[i] * quantity[i];
+                t11+= quantity[i];
+                t2 +=price[i]*quantity[i]*( 100 - discount[i])/100;
+                printf("%s -  %d  -     %d    -   %d%%    -   %d\n", names[i], price[i],quantity[i],discount[i],price[i]*quantity[i]*( 100 - discount[i])/100);
+            }
+            if (t11!=0){
+                printf("\nTo pay without discount: %d\nAverage discount: %d%%\nTo pay: %d\n", t, t1/t11,t2);
+            }
+            else{
+                printf("\nTo pay without discount: %d\nAverage discount: %d%%\nTo pay: %d\n", t, t1/(t1+1),t2);
+            }
+            printf("\nWould you like to create a new cart?\n-2 - No.\n-1 - Yes.\n");
+            while ( scanf("%d", &option) != 1  || option > -1 || option < -2){
+                printf("Incorrect input, please try again.\n");
+                while ( ( c = getchar() ) != "\n" ){}
             }
             break;
         }
