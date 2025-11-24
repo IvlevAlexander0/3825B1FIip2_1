@@ -175,10 +175,8 @@ void add_2_bill() {
     for (int i = 0; i < bill.bill_count; i++) {
         if (compare_codes(bill.products_in_bill[i].position.code, code1)) {
             bill.products_in_bill[i].quantity_of_position++;
-            int price_with_discount = bill.products_in_bill[i].position.price *
-                (100 - bill.products_in_bill[i].position.discount) / 100;
-            bill.products_in_bill[i].total_price_4_position =
-                bill.products_in_bill[i].quantity_of_position * price_with_discount;
+            int price_with_discount = bill.products_in_bill[i].position.price *(100 - bill.products_in_bill[i].position.discount) / 100;
+            bill.products_in_bill[i].total_price_4_position = bill.products_in_bill[i].quantity_of_position * price_with_discount;
             printf("Product was successfully added to the bill\n");
             return;
         }
