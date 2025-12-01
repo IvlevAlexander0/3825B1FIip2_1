@@ -43,7 +43,7 @@ double sel_sort(int* mas, char** name, size_t n) {
     for (size_t i = 0; i < n - 1; ++i) {
         size_t ind = i;
         for (size_t j = i + 1; j < n; ++j) {
-            if (mas[ind] > mas[j]) {
+            if (mas[ind] < mas[j]) {
                 ind = j;
             }
         }
@@ -60,7 +60,7 @@ int partition(int* mas, char** name, int l, int r) {
     int p = mas[r];
     int i = (l - 1);
     for (int j = l; j <= r - 1; j++) {
-        if (mas[j] <= p) {
+        if (mas[j] >= p) {
             i++;
             swap1(&mas[i], &mas[j]);
             swap2(&name[i], &name[j]);  
