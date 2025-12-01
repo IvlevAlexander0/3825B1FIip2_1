@@ -124,11 +124,13 @@ int main() {
         case 4:
             printf("\n Name  - price - quantity - discount - total\n");
             for (int i = 0; i < amount; ++i) {
-                t += price[i] * quantity[i];
-                t1 += discount[i] * quantity[i];
-                t11 += quantity[i];
-                t2 += price[i] * quantity[i] * (100 - discount[i]) / 100;
-                printf("%s -  %d  -     %d    -   %d%%    -   %d\n", names[i], price[i], quantity[i], discount[i], price[i] * quantity[i] * (100 - discount[i]) / 100);
+                if (quantity[i] > 0) {
+                    t += price[i] * quantity[i];
+                    t1 += discount[i] * quantity[i];
+                    t11 += quantity[i];
+                    t2 += price[i] * quantity[i] * (100 - discount[i]) / 100;
+                    printf("%s -  %d  -     %d    -   %d%%    -   %d\n", names[i], price[i], quantity[i], discount[i], price[i] * quantity[i] * (100 - discount[i]) / 100);
+                }
             }
             if (t11 != 0) {
                 printf("\nTo pay without discount: %d\nAverage discount: %d%%\nTo pay: %d\n", t, t1 / t11, t2);
@@ -142,11 +144,13 @@ int main() {
         case 5:
             printf("\n Name  - price - quantity - discount - total\n");
             for (int i = 0; i < amount; ++i) {
-                t += price[i] * quantity[i];
-                t1 += discount[i] * quantity[i];
-                t11 += quantity[i];
-                t2 += price[i] * quantity[i] * (100 - discount[i]) / 100;
-                printf("%s -  %d  -     %d    -   %d%%    -   %d\n", names[i], price[i], quantity[i], discount[i], price[i] * quantity[i] * (100 - discount[i]) / 100);
+                if (quantity[i] > 0) {
+                    t += price[i] * quantity[i];
+                    t1 += discount[i] * quantity[i];
+                    t11 += quantity[i];
+                    t2 += price[i] * quantity[i] * (100 - discount[i]) / 100;
+                    printf("%s -  %d  -     %d    -   %d%%    -   %d\n", names[i], price[i], quantity[i], discount[i], price[i] * quantity[i] * (100 - discount[i]) / 100);
+                }
             }
             if (t11 != 0) {
                 printf("\nTo pay without discount: %d\nAverage discount: %d%%\nTo pay: %d\n", t, t1 / t11, t2);
