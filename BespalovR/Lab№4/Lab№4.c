@@ -56,7 +56,7 @@ int main() {
         printf("\nChoose option : \n1.Add new item to the system.\n2.Show item's info.\n3.Add item to the cart.\n4.Show cart.\n5.Get cheque.\n");
         while (scanf("%d", &option) != 1 || option > 5 || option < 1) {
             printf("Incorrect input, please try again.\n");
-            while ((c = getchar()) != "\n") {}
+            while ((c = getchar()) != '\n') {}
         }
 
 
@@ -67,7 +67,7 @@ int main() {
             printf("Input new item's barcode.(4 digits max. 13 is equal to 0013 barcode)\n");
             while (scanf("%d", &t) != 1 || t > 9999 || t < 0) {
                 printf("Incorrect input, please try again.\n");
-                while ((c = getchar()) != "\n") {}
+                while ((c = getchar()) != '\n') {}
             }
             for (int i = 0; i < amount; ++i) {
                 if (t == barcode[i]) {
@@ -87,7 +87,7 @@ int main() {
             printf("Input new item's name, price and discount%%.\n");
             while (scanf("%s%d%d", buffer, &price[amount - 1], &discount[amount - 1]) != 3 || price[amount - 1] < 1 || discount[amount - 1] > 50 || discount[amount - 1] < 1) {
                 printf("Incorrect input, please try again.\n");
-                while ((c = getchar()) != "\n") {}
+                while ((c = getchar()) != '\n') {}
             }
             names[amount - 1] = strc(buffer);
             barcode[amount - 1] = t;
@@ -102,7 +102,7 @@ int main() {
             }
             while (scanf("%d", &option) != 1 || option > amount || option < 1) {
                 printf("Incorrect input, please try again.\n");
-                while ((c = getchar()) != "\n") {}
+                while ((c = getchar()) != '\n') {}
             }
             printf("\n Name  - price - quantity - discount - barcode\n%s\t%d\t%d\t%d%%\t%.4d\n", names[option - 1], price[option - 1], quantity[option - 1], discount[option - 1], barcode[option - 1]);
             break;
@@ -161,7 +161,7 @@ int main() {
             printf("\nWould you like to create a new cart?\n-2 - No.\n-1 - Yes.\n");
             while (scanf("%d", &option) != 1 || option > -1 || option < -2) {
                 printf("Incorrect input, please try again.\n");
-                while ((c = getchar()) != "\n") {}
+                while ((c = getchar()) != '\n') {}
             }
             break;
         }
