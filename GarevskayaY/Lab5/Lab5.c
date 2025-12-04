@@ -4,8 +4,6 @@
 #include <string.h>
 #include <time.h>
 
-
-
 #define MAX_NAME_LEN 50
 #define MAX_PEOPLE 50
 
@@ -27,7 +25,7 @@ void swap(Person* a, Person* b) {
 
 //Сортировки по возрастанию (номер в списке 6, четный)
 
-// Сортировка выбором
+// Сортировка вставками
 void insertion_sort(Person arr[], int n) {
     for (int i = 1; i < n; ++i) {
         for (int j = i; j > 0; --j) {
@@ -46,9 +44,15 @@ void merge(Person arr[], int l, int m, int r) {
     int i, j, k;
     int n1 = m - l + 1;
     int n2 = r - m;
-    
-    Person *L = (Person*)malloc(n1 * sizeof(Person));
-    Person *R = (Person*)malloc(n2 * sizeof(Person));
+
+    Person* L = (Person*)malloc(n1 * sizeof(Person));
+    Person* R = (Person*)malloc(n2 * sizeof(Person));
+
+    if (!L || !R) {
+        if (L) free(L);
+        if (R) free(R);
+        return;
+    }
 
     for (i = 0; i < n1; i++)
         L[i] = arr[l + i];
@@ -59,7 +63,7 @@ void merge(Person arr[], int l, int m, int r) {
     k = l;
 
     while (i < n1 && j < n2) {
-        if (L[i].age <= R[j].age) {  
+        if (L[i].age <= R[j].age) {
             arr[k] = L[i];
             i++;
         }
@@ -97,13 +101,14 @@ void mergesort(Person arr[], int l, int r) {
 // Сортировка пузырьком (по выбору)
 void bubble_sort(Person arr[], int n) {
     for (int i = 0; i < n - 1; ++i) {
-        for (int j = n - 2; j >= i; --j) {
+        for (int j = 0; j < n - i - 1; ++j) {
             if (arr[j].age > arr[j + 1].age) {
                 swap(&arr[j], &arr[j + 1]);
             }
         }
     }
 }
+
 int read_file(const char* filename, Person people[]) {
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
@@ -112,7 +117,16 @@ int read_file(const char* filename, Person people[]) {
     }
 
     int count = 0;
-    while (count < MAX_PEOPLE && fscanf(file, "%s %d", people[count].name, &people[count].age) == 2) {
+    char buffer[MAX_NAME_LEN];
+
+    while (count < MAX_PEOPLE && fscanf(file, "%49s %d", buffer, &people[count].age) == 2) {
+        people[count].name = (char*)malloc((strlen(buffer) + 1) * sizeof(char));
+        if (people[count].name == NULL) {
+            printf("Memory allocation failed!\n");
+            fclose(file);
+            return count;
+        }
+        strcpy(people[count].name, buffer);
         count++;
     }
 
@@ -143,18 +157,33 @@ void print_people(Person people[], int count) {
 
 void copy_people(Person dest[], Person src[], int count) {
     for (int i = 0; i < count; i++) {
-        dest[i] = src[i];
+        dest[i].name = (char*)malloc((strlen(src[i].name) + 1) * sizeof(char));
+        if (dest[i].name == NULL) {
+            printf("Memory allocation failed during copy!\n");
+            return;
+        }
+        strcpy(dest[i].name, src[i].name);
+        dest[i].age = src[i].age;
     }
 }
 
+void free_people(Person people[], int count) {
+    for (int i = 0; i < count; i++) {
+        free(people[i].name);
+    }
+}
 
 int main() {
-
     Person people[MAX_PEOPLE];
     Person temp_people[MAX_PEOPLE];
     int count = 0;
     int choice;
     int sort_again = 1;
+
+    for (int i = 0; i < MAX_PEOPLE; i++) {
+        people[i].name = NULL;
+        temp_people[i].name = NULL;
+    }
 
     count = read_file("People_in.txt", people);
     if (count == 0) {
@@ -183,6 +212,8 @@ int main() {
             continue;
         }
 
+        free_people(temp_people, count);
+
         copy_people(temp_people, people, count);
 
         clock_t start_time, end_time;
@@ -195,7 +226,7 @@ int main() {
             bubble_sort(temp_people, count);
             break;
 
-        case 2: 
+        case 2:
             printf("\nSorting with insertion sort\n");
             insertion_sort(temp_people, count);
             break;
@@ -220,9 +251,10 @@ int main() {
         clearInputBuffer();
     }
 
+    free_people(people, count);
+    free_people(temp_people, count);
+
     printf("\nGoodbye.");
     return 0;
 }
-
-
 
