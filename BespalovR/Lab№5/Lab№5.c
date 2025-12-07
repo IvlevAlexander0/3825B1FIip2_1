@@ -108,50 +108,62 @@ void write_file(struct row* arr, int n) {
 }
 
 int main() {
+	for (;;) {
+		struct row* arr = calloc(51, sizeof(struct row));
+		if (arr == NULL) {
+			printf("\nCould not allocate memory.\n");
+			return -1;
+		}
 
-	struct row* arr = calloc(51, sizeof(struct row));
-	if (arr == NULL) {
-		printf("\nCould not allocate memory.\n");
-		return -1;
+		int n = read_file(arr);
+		if (n == 0) {
+			printf("\nCould not read file.\n");
+			return -1;
+		}
+		else if (n == -1) {
+			printf("Incorrect data format.\n");
+			return -1;
+		}
+
+		int option = choose_sort();
+		clock_t t = clock();
+		//Good place for function pointer but switch case will do the thing as well.
+		switch (option) {
+		case 1:
+			quick_sort(arr, 0, n - 1);
+			break;
+		case 2:
+			selection_sort(arr, n);
+			break;
+		case 3:
+			bubble_sort(arr, n);
+			break;
+		}
+		t = clock() - t;
+		double time = ((double)t) / CLOCKS_PER_SEC;
+
+		write_file(arr, n);
+
+		printf("\n");
+		for (int i = 0; i < n; ++i) {
+			printf("%s\t%d\n", arr[i].name, arr[i].age);
+		}
+
+		printf("\nSorted data is stored in People_out.txt.\n");
+		printf("Sorting took %lf seconds\n", time);
+		//With my limited testing time is always 0 seconds. dunno whether or not it's supposed to be like that.
+		printf("\nWould you like to sort again with different sorting algorythm? (y/n)\n");
+		char c;
+		while ((c = getchar()) != '\n') {}
+		while ( scanf("%c", &c ) != 1 || (c != 'n' && c != 'y')) {
+			printf("Incorrect input. Please try again.\n");
+			while ((c = getchar()) != '\n') {}
+		}
+		if (c == 'n') {
+			break;
+		}
+		free(arr);
+		arr = NULL;
 	}
-
-	int n = read_file(arr);
-	if (n == 0) {
-		printf("\nCould not read file.\n");
-		return -1;
-	}
-	else if (n == -1) {
-		printf("Incorrect data format.\n");
-		return -1;
-	}
-
-	int option = choose_sort();
-	clock_t t = clock();
-	//Good place for function pointer but switch case will do the thing as well.
-	switch (option) {
-	case 1:
-		quick_sort(arr, 0, n-1);
-		break;
-	case 2:
-		selection_sort(arr, n);
-		break;
-	case 3:
-		bubble_sort(arr, n);
-		break;
-	}
-	t = clock() - t;
-	double time = ((double)t) / CLOCKS_PER_SEC;
-
-	write_file(arr,n);
-
-	printf("\n");
-	for (int i = 0; i < n; ++i) {
-		printf("%s\t%d\n", arr[i].name, arr[i].age);
-	}
-
-	printf("\nSorted data is stored in People_out.txt.\n");
-	printf("Sorting took %lf seconds\n", time);
-	//With my limited testing time is always 0 seconds. dunno whether or not it's supposed to be like that.
-	free(arr);
 	return 0;
 }
