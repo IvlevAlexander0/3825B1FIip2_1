@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-//На фоне 4 лабораторной, которая мне не зашла и на котору. ушло около 4 попыток, эта мне очень понравилась и я выложился по полной.
 struct row {
 	//Suggested that names are less than 16 in length.
 	char name[16];
@@ -13,7 +12,7 @@ int choose_sort() {
 	printf("Choose sorting algorythm:\n");
 	printf("1 - Quick sort.\n");
 	printf("2 - Selection sort.\n");
-	printf("3 - Bubble sort.\n");
+	printf("3 - Merge sort.\n");
 	int t = 0;
 	while (scanf("%d", &t) != 1 || t > 3 || t < 1) {
 		printf("Incorrect input. Please try again.\n");
@@ -62,22 +61,43 @@ void selection_sort(struct row* arr, int n) {
 	}
 }
 
-void bubble_sort(struct row* arr, int n) {
-	for (int i = 0; i < n - 1; ++i) {
-		int flag = 0;
-		for (int j = 0; j < n - i - 1; ++j) {
-			if (arr[j].age > arr[j + 1].age) {
-				struct row t = arr[j];
-				arr[j] = arr[j + 1];
-				arr[j + 1] = t;
-				flag = 1;
-			}
+void merge(struct row* arr, int left, int mid, int right) {
+	int i, j, k;
+	int n1 = mid - left + 1;
+	int n2 = right - mid;
+	struct row* leftArr = calloc(n1, sizeof(int));
+	struct row* rightArr = calloc(n2, sizeof(int));
+	for (i = 0; i < n1; i++)
+		leftArr[i] = arr[left + i];
+	for (j = 0; j < n2; j++)
+		rightArr[j] = arr[mid + 1 + j];
+		i = 0;
+		j = 0;
+		k = left;
+	while (i < n1 && j < n2) {
+		if (leftArr[i].age <= rightArr[j].age) {
+			arr[k] = leftArr[i++];
 		}
-		if (flag == 0) {
-			break;
+		else {
+			arr[k] = rightArr[j++];
 		}
+		k++;
 	}
-				
+	while (i < n1) {
+		arr[k++] = leftArr[i++];
+	}
+	while (j < n2) {
+		arr[k++] = rightArr[j++];
+	}
+}
+
+void merge_sort(struct row* arr, int left, int right) {
+	if (left < right) {
+		int mid = left + (right - left) / 2;
+		merge_sort(arr, left, mid);
+		merge_sort(arr, mid + 1, right);
+		merge(arr, left, mid, right);
+	}
 }
 
 int read_file(struct row* arr) {
@@ -136,7 +156,7 @@ int main() {
 			selection_sort(arr, n);
 			break;
 		case 3:
-			bubble_sort(arr, n);
+			merge_sort(arr, 0, n-1);
 			break;
 		}
 		t = clock() - t;
