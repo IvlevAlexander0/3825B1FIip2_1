@@ -65,29 +65,30 @@ void merge(struct row* arr, int left, int mid, int right) {
 	int i, j, k;
 	int n1 = mid - left + 1;
 	int n2 = right - mid;
-	struct row* leftArr = calloc(n1, sizeof(int));
-	struct row* rightArr = calloc(n2, sizeof(int));
+	//passive debugging of VS gives warnings about leftarr and rightarr
+	struct row* left_arr = calloc(n1, sizeof(struct row));
+	struct row* right_arr = calloc(n2, sizeof(struct row));
 	for (i = 0; i < n1; i++)
-		leftArr[i] = arr[left + i];
+		left_arr[i] = arr[left + i];
 	for (j = 0; j < n2; j++)
-		rightArr[j] = arr[mid + 1 + j];
+		right_arr[j] = arr[mid + 1 + j];
 		i = 0;
 		j = 0;
 		k = left;
 	while (i < n1 && j < n2) {
-		if (leftArr[i].age <= rightArr[j].age) {
-			arr[k] = leftArr[i++];
+		if (left_arr[i].age <= right_arr[j].age) {
+			arr[k] = left_arr[i++];
 		}
 		else {
-			arr[k] = rightArr[j++];
+			arr[k] = right_arr[j++];
 		}
 		k++;
 	}
 	while (i < n1) {
-		arr[k++] = leftArr[i++];
+		arr[k++] = left_arr[i++];
 	}
 	while (j < n2) {
-		arr[k++] = rightArr[j++];
+		arr[k++] = right_arr[j++];
 	}
 }
 
@@ -105,7 +106,6 @@ int read_file(struct row* arr) {
 	if (fptr == NULL) {
 		return 0;
 	}
-	char c;
 	int n = 0;
 	//Suggested that file is formated the right way of "word number endline".
 	while (fscanf(fptr, "%s %d", &arr[n].name, &arr[n].age) == 2) {
@@ -115,6 +115,7 @@ int read_file(struct row* arr) {
 		}
 	}
 	fclose(fptr);
+	fptr = NULL;
 	return n;
 }
 
@@ -125,6 +126,7 @@ void write_file(struct row* arr, int n) {
 		fprintf(fptr, "%s\t%d\n", arr[i].name,arr[i].age);
 	}
 	fclose(fptr);
+	fptr = NULL;
 }
 
 int main() {
