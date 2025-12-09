@@ -90,6 +90,8 @@ void merge(struct row* arr, int left, int mid, int right) {
 	while (j < n2) {
 		arr[k++] = right_arr[j++];
 	}
+	free(left_arr);
+	free(right_arr);
 }
 
 void merge_sort(struct row* arr, int left, int right) {
