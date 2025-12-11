@@ -3,90 +3,103 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define pi 3.14159265358979323846
+
+
 typedef double (*teylorfunc)(double, int, int*, double);
 typedef double (*refencefunc)(double);
 
-double factorial(int n) {
-    double res = 1.0;
-    for (int i = 2; i <= n; i++) {
-        res *= i;
-    }
-    return res;
-}
-
 double tsin(double x, int n, int* count, double pog) {
-    double res = 0.0;
-    double term;
-    double prev;
-    if (count) {
-        *count = 0;
+    x = fmod(x, 2 * pi);
+    if (x > pi) {
+        x -= 2 * pi;
+    }
+    if (x < -pi) {
+        x += 2 * pi;
     }
 
-    for (int k = 0; k < n; k++) {
-        int step = 2 * k + 1;
-        term = pow(x, step) / factorial(step);
+    long double term = x;
+    long double res = x;
+    int k = 1;
+    *count = 1;
 
-        if (k % 2 == 1) {
-            term = -term;
-        }
-
+    do {
+        term *= -x * x / ((2 * k) * (2 * k + 1));
         res += term;
-        if (count) {
-            (*count)++;
-        }
+        k++;
+        (*count)++;  
+    } while (k <= n && fabsl(term) > pog);
 
-        if (k > 0 && fabs(term) < pog) {
-            break;
-        }
+    if (fabsl(term) <= pog) {
+        (*count)--;
+        res -= term;
     }
-
     return res;
 }
-
 
 double tcos(double x, int n, int* count, double pog) {
-    double res = 0.0;
-    double term;
-    if (count) {
-        *count = 0;
+    x = fmod(x, 2 * pi);
+    if (x > pi) {
+        x -= 2 * pi;
+    }
+    if (x < -pi) {
+        x += 2 * pi;
     }
 
-    for (int k = 0; k < n; k++) {
-        int step = 2 * k;
-        term = pow(x, step) / factorial(step);
+    long double term = 1.0;
+    long double res = 1.0;
+    int k = 1;
+    *count = 1;
 
-        if (k % 2 == 1) {
-            term = -term;
-        }
-
+    do {
+        term *= -x * x / ((2 * k - 1) * (2 * k));
         res += term;
-        if (count) {
-            (*count)++;
-        }
-        if (k > 0 && fabs(term) < pog) {
-            break;
-        }
-    }
+        k++;
+        (*count)++;
+    } while (k <= n && fabsl(term) > pog);
 
+    if (fabsl(term) <= pog) {
+        (*count)--;
+        res -= term;
+    }
     return res;
 }
 
 double telexp(double x, int n, int* count, double pog) {
-    double res = 0.0;
-    double term;
-    if (count) {
-        *count = 0;
+    int p = 0;
+    long double origx = x;
+
+    if (fabsl(x) > 1.0) {
+        p = (int)fabsl(x) + 1;
+        x /= p;
     }
 
-    for (int k = 0; k < n; k++) {
-        term = pow(x, k) / factorial(k);
-        res += term;
-        if (count) {
-            (*count)++;
-        }
+    long double term = 1.0;
+    long double res = 1.0;
+    int k = 1;
+    *count = 1;
 
-        if (k > 0 && fabs(term) < pog) {
-            break;
+    do {
+        term *= x / k;
+        res += term;
+        k++;
+        (*count)++;
+    } while (k <= n && fabsl(term) > pog);
+
+    if (fabsl(term) <= pog) {
+        (*count)--;
+        res -= term;
+    }
+
+    if (p > 0) {
+        long double st = 1.0;
+        for (int i = 0; i < p; i++) {
+            st *= res;  
+        }
+        res = st;
+
+        if (origx < 0) {
+            res = 1.0 / res;
         }
     }
 
@@ -94,33 +107,49 @@ double telexp(double x, int n, int* count, double pog) {
 }
 
 double tarcsin(double x, int n, int* count, double pog) {
-    double res = 0.0;
-    double term;
-    if (count) {
-        *count = 0;
-    }
-
-    for (int k = 0; k < n; k++) {
-        double coeff = 1.0;
-        for (int i = 1; i <= k; i++) {
-            coeff *= (2.0 * i - 1.0) / (2.0 * i);
+        if (fabsl(x) == 1.0) {
+            *count = 1;
+            return (x > 0) ? (pi / 2) : (-pi / 2);
         }
 
-        int step = 2 * k + 1;
-        term = coeff * pow(x, step) / step;
+        double sign;
+        if (x >= 0) {
+            sign = 1.0;
+        }
+        else {
+            sign = -1.0;
+        }
+        x = fabsl(x);
 
-        res += term;
-        if (count) {
+        if (x > 0.5) {
+            double reduced_x = sqrtl((1.0 - x) / 2.0);
+            int c = 0;
+            double result = (pi / 2) - 2.0 * tarcsin(reduced_x, n, &c, pog);
+            *count = c;
+            return sign * result;
+        }
+
+        long double term = x;
+        long double res = x;
+        long double x_squared = x * x;
+        int k = 1;
+        *count = 1;
+
+        do {
+            term *= x_squared * (2 * k - 1) * (2 * k - 1) / ((2 * k) * (2 * k + 1));
+            res += term;
+            k++;
             (*count)++;
+        } while (k <= n && fabsl(term) > pog);
+
+        if (fabsl(term) <= pog) {
+            (*count)--;
+            res -= term;
         }
 
-        if (k > 0 && fabs(term) < pog) {
-            break;
-        }
+        return sign * res;
     }
 
-    return res;
-}
 
 teylorfunc rdT(char f) {
     if (f == '1') {
@@ -152,45 +181,115 @@ refencefunc standart(char f) {
     }
 }
 
+
 int main() {
-	char mode, func;
-	double x, pog;
-    
-	printf("Select a mode: \n1. A single calculation of the function at a given point.\n2. Serial experiment.\n");
-	while (scanf(" %c", &mode) != 1 || (mode != '1' && mode != '2')) {
-		printf("Input error. Try again!\n");
-	}
-	while (getchar() != '\n');
+    char mode, func;
+    double x, pog;
 
-	printf("Select a function: \n1. sin x \n2. cos x \n3. exp x \n4. arcsin x\n");
-	while (scanf(" %c", &func) != 1 || (func != '1' && func != '2' && func != '3' && func != '4')) {
-		printf("Input error. Try again!\n");
-	}
-	while (getchar() != '\n');
+    printf("Select a mode: \n1. A single calculation of the function at a given point.\n2. Serial experiment.\n");
+    while (1) {
+        mode = getchar();
+        if (mode != '1' && mode != '2') {
+            printf("Input error. Try again!\n");
+        }
+        else {
+            char cled = getchar();
+            if (cled != '\n') {
+                printf("Input error. Try again!\n");
+            }
+            else {
+                break;
+            }
+        }
+        while (getchar() != '\n');
+    }
 
-	printf("Enter the point where you want to calculate the value: \n");
-	while (scanf("%lf", &x) != 1 || (func == '4' && (x < -1.0 || x > 1.0))) {
-		printf("Input error. Try again!\n");
-	}
-	while (getchar() != '\n');
+    printf("Select a function: \n1. sin x \n2. cos x \n3. exp x \n4. arcsin x\n");
+    while (1) {
+        func = getchar();
+        if (func != '1' && func != '2' && func != '3' && func != '4') {
+            printf("Input error. Try again!\n");
+        }
+        else {
+            char cled = getchar();
+            if (cled != '\n') {
+                printf("The number must be since 1 to 4\n");
+            }
+            else {
+                break;
+            }
+        }
+        while (getchar() != '\n');
+    }
 
-	if (mode == '1') {
-		int n;
+    printf("Enter the point where you want to calculate the value: \n");
+    while (1) {
+        if (scanf("%lf", &x) == 1) {
+            double cled = getchar();
+            if (cled == '\n') {
+                if (func == '4' && x >= -1.00 && x <= 1.00) {
+                    break;
+                }
+                else if (func == '4') {
+                    printf("The number must be since -1 to 1.\n");
+                }
+                else {
+                    break;
+                }
+            }
+            else {
+                printf("Input error. Try again!\n");
+                while (getchar() != '\n');
+            }
+        }
+        else {
+            printf("Input error. Try again!\n");
+            while (getchar() != '\n');
+        };
+    }
+
+    teylorfunc taylor = rdT(func);
+    refencefunc std = standart(func);
+
+    if (mode == '1') {
+        int n;
         int count = 0;
-		printf("Enter the accuracy of the calculation (from 0.000001 or more): \n");
-		while (scanf("%lf", &pog) != 1) {
-			printf("Input error. Try again!\n");
-		}
-		while (getchar() != '\n');
+        printf("Enter the accuracy of the calculation (from 0.000001 or more): \n");
+        while (1) {
+            if (scanf("%lf", &pog) == 1 && pog > 0.000001) {
+                double cled = getchar();
+                if (cled == '\n') {
+                    break;
+                }
+                else {
+                    printf("Input error. Try again!\n");
+                    while (getchar() != '\n');
+                }
+            }
+            else {
+                printf("Input error. Try again!\n");
+                while (getchar() != '\n');
+            }
+        }
 
-		printf("Enter the maximum number of row elements to perform the calculation (N - from 1 to 1000): \n");
-		while (scanf("%d", &n) != 1 || (n < 1 || n > 1000)) {
-			printf("Input error. Try again!\n");
-		}
-		while (getchar() != '\n');
+        printf("Enter the maximum number of row elements to perform the calculation (N - from 1 to 1000): \n");
+        while (1) {
+            if (scanf("%d", &n) == 1 && (n > 1 && n < 1000)) {
+                int cled = getchar();
+                if (cled == '\n') {
+                    break;
+                }
+                else {
+                    printf("The number must be an integer\n");
+                    while (getchar() != '\n');
+                }
+            }
+            else {
+                printf("Input error. Try again!\n");
+                while (getchar() != '\n');
+            }
+        }
 
-        teylorfunc taylor = rdT(func);
-        refencefunc std = standart(func);
 
         if (taylor == NULL || std == NULL) {
             printf("Error: function not found\n");
@@ -199,37 +298,43 @@ int main() {
 
         double res1 = std(x);
         double res2 = taylor(x, n, &count, pog);
-		printf("The reference value: %.10f\n", res1);
-		printf("Evaluation of the function value: %.10f\n", res2);
-		printf("The difference between the estepimate and the reference value: %.10f\n", fabs(res2 - res1));
-		printf("Number of terms: %d\n", count);
-	}
-	else {
+        printf("The reference value: %.10f\n", res1);
+        printf("Evaluation of the function value: %.10f\n", res2);
+        printf("The difference between the estepimate and the reference value: %.10f\n", fabs(res2 - res1));
+        printf("Number of terms: %d\n", count);
+    }
+    else {
         int nmax;
         printf("Enter number of experiments (1 - 25): \n");
-        while (scanf("%d", &nmax) != 1 || nmax < 1 || nmax > 25) {
-            printf("Input error. Try again!\n");
+        while (1) {
+            if (scanf("%d", &nmax) == 1 && (nmax > 0 && nmax < 26)) {
+                int cled = getchar();
+                if (cled == '\n') {
+                    break;
+                }
+                else {
+                    printf("The number must be an integer\n");
+                    while (getchar() != '\n');
+                }
+            }
+            else {
+                printf("Input error. Try again!\n");
+                while (getchar() != '\n');
+            }
         }
-        while (getchar() != '\n');
 
-        refencefunc std = standart(func);
-        teylorfunc taylor = rdT(func);
         double et = std(x);
         printf("The reference value: %.10f\n\n", et);
         printf(" --------------------------------------------------------\n");
         printf("| Count |         Taylor        |       Difference       |\n");
         printf(" --------------------------------------------------------\n");
-        double tlor;
-        int pr = -1;
+
         for (int i = 1; i <= nmax; i++) {
             int count = 0;
             double tlor = taylor(x, i, &count, 1e-20);
-            if (count != pr) {
-                printf("|  %3d  | %21.10f | %21.10f  |\n", count, tlor, et - tlor);
-            }
-            pr = count;
+            printf("|  %3d  | %21.10f | %21.10f  |\n", i, tlor, fabs(et - tlor));
         }
         printf("---------------------------------------------------------\n\n");
-	}
-	return 0;
+    }
+    return 0;
 }
