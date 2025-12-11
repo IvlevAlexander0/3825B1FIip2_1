@@ -4,22 +4,28 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 int main() {
     int mode = 0;
     int count = 0;
-
-    while (mode != 1 && mode != 2) {
+    do {
         printf("Choose mode:\n");
         printf("1 - You guess computer's number\n");
         printf("2 - Computer guesses number\n");
-        scanf("%d", &mode);
-        if (mode != 1 && mode != 2) {
+        int k = scanf("%d", &mode);
+        if (k != 1) {
+            printf("Error: enter the NUMBER\n");
+            while (getchar() != '\n');
+        }
+        else if (mode != 1 && mode != 2) {
             printf("Error: try again to choose the mode.\n");
         }
         else {
             break;
         }
-    }
+    } while (1);
+     
+    
 
     if (mode == 1) {
         srand(time(0));
@@ -29,9 +35,13 @@ int main() {
         printf("Computer guessed a number from 1 to 1000. Try to guess it!\n");
         while (s != g) {
             printf("Enter your number: ");
-            scanf("%d", &g);
+            int p = scanf("%d", &g);
             count = count + 1;
-            if (g == s) {
+            if (p != 1) {
+                printf("Enter the number\n");
+                while (getchar() != '\n');
+            }
+            else if (g == s) {
                 printf("SUCCESS! You guessed the number.\n");
             }
             else if (g < s) {
@@ -54,6 +64,7 @@ int main() {
             printf("Computer's guess: %d\n", g);
             printf("Enter '>' if your number is bigger, '<' if smaller, '=' if correct: ");
             scanf(" %c", &answer);
+            while (getchar() != '\n');
             if (answer == '=') {
                 printf("Computer guessed your number!\n");
                 printf("The number is: %d\n", g);
@@ -64,6 +75,11 @@ int main() {
             }
             else if (answer == '<') {
                 b = g - 1;
+            }
+            else {
+                printf("Enter only '<', '>' or '='\n");
+                count = count - 1;
+                continue;
             }
         }
     }
