@@ -152,7 +152,7 @@ void addToProducts(struct product_info* products_info, struct product* products,
 }
 
 void addToCart(int* cart, int product_num) {
-	//cart = 
+	
 }
 
 void printProductInfo(struct product_info product_info) {
@@ -206,23 +206,26 @@ void main() {
 	initProductList(products, products_count);
 	initProductInfoList(products_info, products, products_count);
 
-	printActionList();
-	size_t now_action = enterAction();
-	switch (now_action) {
-	case 1:
-		addToProducts(products_info, products, &products_count);
-		break;
-	case 2:
-		printProductList(products, products_count);
-		scanProduct(selectProduct(products_count), products, products_info, products_count);
-		break;
-	case 3:
+	while (1) {
+		printActionList();
+		size_t now_action = enterAction();
+		switch (now_action) {
+		case 1:
+			addToProducts(products_info, products, &products_count);
+			break;
+		case 2:
+			printProductList(products, products_count);
+			scanProduct(selectProduct(products_count), products, products_info, products_count);
+			break;
+		case 3:
 
-		break;
-	case 4:
+			break;
+		case 4:
 
-		break;
+			break;
+		}
 	}
+	
 
 	/*addToProducts(products_info, products, &products_count);
 	printProductInof(products_info, products_count);*/
