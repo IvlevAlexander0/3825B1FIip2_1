@@ -131,6 +131,7 @@ int select_function() {
 }
 
 int main() {
+
     int mode = select_mode();
     int choice = select_function();
     size_t i;
@@ -167,13 +168,38 @@ int main() {
             while ((c = getchar()) != '\n') {}
         }
 
+
         printf("%Lf\n", fnc(x));
         printf("%Lf\n", lf_fnc(eps, n, x, i_count));
         printf("%Lf\n", fabsl(lf_fnc(eps, n, x, i_count) - fnc(x)));
         printf("%zu\n", i);
         break;
     }
+
+
     case 2: {
+
+
+        printf("Input x.\n");
+        long double x;
+        while (scanf("%Lf", &x) != 1) {
+            printf("Incorrect input. Please try again.\n");
+            char c;
+            while ((c = getchar()) != '\n') {}
+        }
+
+
+        printf("Input n.\n");
+        size_t nmax;
+        while (scanf("%zu", &nmax) != 1 || nmax < 1) {
+            printf("Incorrect input. Please try again.\n");
+            char c;
+            while ((c = getchar()) != '\n') {}
+        }
+
+        for (size_t n = 1; n < nmax + 1; ++n) {
+            printf("%zu\t%Lf\t%Lf\n", n, lf_fnc(0, n, x, i_count), fabsl(lf_fnc(0, n, x, i_count) - fnc(x)));
+        }
         break;
     }
     }
