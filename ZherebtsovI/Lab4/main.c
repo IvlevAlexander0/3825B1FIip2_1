@@ -7,7 +7,7 @@
 /*
 Прочитал про такую штуку, как  интернирование строк. Там строковый литерал пихается в read-only data, а указатель получает адрес начала этого литерала.
 Из этого вопросы:
-1.  char* str = "Old str"; 
+1.  char* str = "Old str";
 	str = "New Str"; //Память утекла?
 2. Можем ли мы подобные вещи делать с массивами. Можем ли мы вообще изменятб указатель массива, который указывает на первый элемент?
 */
@@ -48,7 +48,7 @@ void initProductInfoList(struct product_info* products_info, struct product* pro
 		strcpy(products_info[i].barcode, products[i].barcode); //Maybe copy pointers?
 		strcpy(products_info[i].name, products[i].name);
 	}
-	
+
 	products_info[0].price = 30;
 	products_info[1].price = 35;
 	products_info[2].price = 45;
@@ -114,7 +114,7 @@ void enterProductBarcode(struct product* products, struct product_info* products
 	strcpy(products_info[products_count - 1].barcode, products[products_count - 1].barcode);
 }
 
-void enterProductPrice(unsigned int *price) {
+void enterProductPrice(unsigned int* price) {
 	int entered_price = 0;
 	printf("Enter product price: ");
 	while (!scanf("%u", &entered_price) || entered_price <= 0) {
@@ -156,7 +156,7 @@ void addToCart(int* cart, int product_num) {
 }
 
 void printProductInfo(struct product_info product_info) {
-		printf("%s ---------------- %u RUB | DISC: %hhu%%\n", product_info.name, product_info.price, product_info.discount);
+	printf("%s ---------------- %u RUB | DISC: %hhu%%\n", product_info.name, product_info.price, product_info.discount);
 }
 
 void scanProduct(size_t product_num, struct product* products, struct product_info* products_info, size_t products_count) {
@@ -230,4 +230,4 @@ void main() {
 	free(products);
 	free(products_info); //In Debug causes _CrtIsValidHeapPointer(block) visual studio error
 	free(cart);
-} 
+}
