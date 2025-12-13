@@ -124,18 +124,18 @@ void enterProductDiscount(unsigned char* discount) {
 	clearInput();
 }
 
-void addToProducts(struct product* products, size_t* products_count) {
+void addToProducts(struct product** products, size_t* products_count) {
 	*products_count += 1;
 
-	products = (struct product*)realloc(products, *products_count * sizeof(struct product));
+	/**products = (struct product*)*/realloc(*products, *products_count * sizeof(struct product));
 
-	enterProductName(products, *products_count);
+	enterProductName(*products, *products_count);
 	printf("--------------------------\n");
-	enterProductBarcode(products, *products_count);
+	enterProductBarcode(*products, *products_count);
 	printf("--------------------------\n");
-	enterProductPrice(&products[*products_count - 1].price);
+	enterProductPrice(&(*products)[*products_count - 1].price);
 	printf("--------------------------\n");
-	enterProductDiscount(&products[*products_count - 1].discount);
+	enterProductDiscount(&(*products)[*products_count - 1].discount);
 	printf("--------------------------\n");
 }
 
@@ -176,7 +176,7 @@ void printReceipt(unsigned int* cart, struct product* products, size_t products_
 			printf("%zu. %-20s%u X %u RUB | DISC: %hhu%%\n", number, products[i].name, cart[i], products[i].price, products[i].discount);
 			printf("TOTAL PRICE: %.0f RUB\n", round(cart[i] * products[i].price * (1 - (float)products[i].discount / 100)));
 			sum += cart[i] * products[i].price;
-			sum_disc += cart[i] * products[i].price * (1 - (float)products[i].discount / 100);
+			sum_disc += round(cart[i] * products[i].price * (1 - (float)products[i].discount / 100));
 			number++;
 		}
 	}
@@ -218,7 +218,7 @@ void main() {
 		size_t now_action = enterAction();
 		switch (now_action) {
 		case 1:
-			addToProducts(products, &products_count);
+			addToProducts(&products, &products_count);
 			cart = (unsigned int*)realloc(cart, products_count * sizeof(unsigned int));
 			cart[products_count - 1] = 0;
 			break;
