@@ -124,10 +124,10 @@ void enterProductDiscount(unsigned char* discount) {
 	clearInput();
 }
 
-void addToProducts(struct product** products, size_t* products_count) {
+unsigned char addToProducts(struct product** products, size_t* products_count) {
 	*products_count += 1;
 
-	/**products = (struct product*)*/realloc(*products, *products_count * sizeof(struct product));
+	if (!realloc(*products, *products_count * sizeof(struct product))) return 1;
 
 	enterProductName(*products, *products_count);
 	printf("--------------------------\n");
@@ -137,6 +137,8 @@ void addToProducts(struct product** products, size_t* products_count) {
 	printf("--------------------------\n");
 	enterProductDiscount(&(*products)[*products_count - 1].discount);
 	printf("--------------------------\n");
+
+	return 0;
 }
 
 void printProductList(struct product* products, size_t products_count) {
@@ -189,14 +191,14 @@ void printReceipt(unsigned int* cart, struct product* products, size_t products_
 	}
 }
 
-unsigned int selectIsExit() {
-	unsigned int is_exit = 0;
+unsigned char selectIsExit() {
+	unsigned char is_exit = 0;
 
 	printf("Select action: \n");
 	printf("1. Start new receipt\n");
 	printf("2. Exit\n");
 	printf("Enter you choose: ");
-	while (!scanf("%u", &is_exit) || is_exit < 1 || is_exit > 2) {
+	while (!scanf("%hhu", &is_exit) || is_exit < 1 || is_exit > 2) {
 		clearInput();
 		printf("Encorrect enter. Enter you choose: ");
 	}
@@ -211,16 +213,20 @@ void main() {
 	unsigned int* cart = (unsigned int*)calloc(products_count, sizeof(unsigned int));
 
 	initProductList(products, products_count);
-	unsigned int is_exit = 0;
+	unsigned char is_exit = 0;
 
 	while (!is_exit) {
 		printActionList();
 		size_t now_action = enterAction();
 		switch (now_action) {
 		case 1:
-			addToProducts(&products, &products_count);
+			is_exit = addToProducts(&products, &products_count);
 			cart = (unsigned int*)realloc(cart, products_count * sizeof(unsigned int));
 			cart[products_count - 1] = 0;
+
+			if (is_exit) {
+				printf("REALLOCATION FAILED");
+			}
 			break;
 		case 2:
 			printProductList(products, products_count);
