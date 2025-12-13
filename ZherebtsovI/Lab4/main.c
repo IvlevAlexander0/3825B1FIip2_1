@@ -7,11 +7,6 @@
 struct product {
 	char barcode[5];
 	char name[21];
-};
-
-struct product_info {
-	char barcode[5];
-	char name[21];
 	unsigned int price;
 	unsigned char discount;
 };
@@ -33,25 +28,18 @@ void initProductList(struct product* products, size_t product_count) {
 	strcpy(products[2].barcode, "0003");
 	strcpy(products[3].barcode, "0004");
 	strcpy(products[4].barcode, "0005");
-}
 
-void initProductInfoList(struct product_info* products_info, struct product* products, size_t product_count) {
-	for (size_t i = 0; i < product_count; ++i) {
-		strcpy(products_info[i].barcode, products[i].barcode); //Maybe copy pointers?
-		strcpy(products_info[i].name, products[i].name);
-	}
+	products[0].price = 30;
+	products[1].price = 35;
+	products[2].price = 45;
+	products[3].price = 99;
+	products[4].price = 200;
 
-	products_info[0].price = 30;
-	products_info[1].price = 35;
-	products_info[2].price = 45;
-	products_info[3].price = 99;
-	products_info[4].price = 200;
-
-	products_info[0].discount = 5;
-	products_info[1].discount = 3;
-	products_info[2].discount = 1;
-	products_info[3].discount = 6;
-	products_info[4].discount = 15;
+	products[0].discount = 5;
+	products[1].discount = 3;
+	products[2].discount = 1;
+	products[3].discount = 6;
+	products[4].discount = 15;
 }
 
 void printActionList() {
@@ -82,14 +70,13 @@ unsigned char isFreeName(char* name, struct product* products, size_t products_c
 	return 1;
 }
 
-void enterProductName(struct product* products, struct product_info* products_info, size_t products_count) {
+void enterProductName(struct product* products, size_t products_count) {
 	printf("Enter product name: ");
 	while (!scanf("%20s", products[products_count - 1].name) || !isFreeName(products[products_count - 1].name, products, products_count - 1)) {
 		clearInput();
 		printf("Encorrect product name. Enter product name: ");
 	}
 	clearInput();
-	strcpy(products_info[products_count - 1].name, products[products_count - 1].name);
 }
 
 unsigned char isFreeBarcode(char* barcode, struct product* products, size_t products_count) {
@@ -108,14 +95,13 @@ unsigned char isCorrectBarcode(char* barcode) {
 	return 1;
 }
 
-void enterProductBarcode(struct product* products, struct product_info* products_info, size_t products_count) {
+void enterProductBarcode(struct product* products, size_t products_count) {
 	printf("Enter product barcode: ");
 	while (!scanf("%4s", products[products_count - 1].barcode) || !isFreeBarcode(products[products_count - 1].barcode, products, products_count - 1) || !isCorrectBarcode(products[products_count - 1].barcode)) {
 		clearInput();
 		printf("Encorrect product barcode. Enter product barcode: ");
 	}
 	clearInput();
-	strcpy(products_info[products_count - 1].barcode, products[products_count - 1].barcode);
 }
 
 void enterProductPrice(unsigned int* price) {
@@ -138,19 +124,18 @@ void enterProductDiscount(unsigned char* discount) {
 	clearInput();
 }
 
-void addToProducts(struct product_info* products_info, struct product* products, size_t* products_count) {
+void addToProducts(struct product* products, size_t* products_count) {
 	*products_count += 1;
 
 	products = (struct product*)realloc(products, *products_count * sizeof(struct product));
-	products_info = (struct product_info*)realloc(products_info, *products_count * sizeof(struct product_info));
 
-	enterProductName(products, products_info, *products_count);
+	enterProductName(products, *products_count);
 	printf("--------------------------\n");
-	enterProductBarcode(products, products_info, *products_count);
+	enterProductBarcode(products, *products_count);
 	printf("--------------------------\n");
-	enterProductPrice(&products_info[*products_count - 1].price);
+	enterProductPrice(&products[*products_count - 1].price);
 	printf("--------------------------\n");
-	enterProductDiscount(&products_info[*products_count - 1].discount);
+	enterProductDiscount(&products[*products_count - 1].discount);
 	printf("--------------------------\n");
 }
 
@@ -170,35 +155,28 @@ size_t selectProduct(size_t products_count) {
 		printf("Encorrect enter. Enter product number to scan it: ");
 	}
 
-	return product_num;
+	return product_num - 1;
 }
 
-void printProductInfo(struct product_info product_info) {
+void printProductInfo(struct product product_info) {
 	printf("%s ---------------- %u RUB | DISC: %hhu%%\n", product_info.name, product_info.price, product_info.discount);
 }
 
-void scanProduct(size_t product_num, struct product* products, struct product_info* products_info, size_t products_count) {
-	size_t product_index = 0;
-
-	for (product_index; strcmp(products_info[product_index].barcode, products[product_num - 1].barcode); ++product_index);
-	printProductInfo(products_info[product_index]);
-}
-
 void addToCart(int product_num, unsigned int* cart) {
-	cart[product_num - 1]++;
+	cart[product_num]++;
 }
 
-void printReceipt(unsigned int* cart, struct product_info* products_info, size_t products_count) {
+void printReceipt(unsigned int* cart, struct product* products, size_t products_count) {
 	printf("\n===[RECEIPT]===\n");
 	size_t number = 1;
 	float sum = 0;
 	float sum_disc = 0;
 	for (size_t i = 0; i < products_count; ++i) {
 		if (cart[i] > 0) {
-			printf("%zu. %-20s%u X %u RUB | DISC: %hhu%%\n", number, products_info[i].name, cart[i], products_info[i].price, products_info[i].discount);
-			printf("TOTAL PRICE: %.0f RUB\n", round(cart[i] * products_info[i].price * (1 - (float)products_info[i].discount / 100)));
-			sum += cart[i] * products_info[i].price;
-			sum_disc += cart[i] * products_info[i].price * (1 - (float)products_info[i].discount / 100);
+			printf("%zu. %-20s%u X %u RUB | DISC: %hhu%%\n", number, products[i].name, cart[i], products[i].price, products[i].discount);
+			printf("TOTAL PRICE: %.0f RUB\n", round(cart[i] * products[i].price * (1 - (float)products[i].discount / 100)));
+			sum += cart[i] * products[i].price;
+			sum_disc += cart[i] * products[i].price * (1 - (float)products[i].discount / 100);
 			number++;
 		}
 	}
@@ -230,31 +208,30 @@ unsigned int selectIsExit() {
 void main() {
 	size_t products_count = 5;
 	struct product* products = (struct product*)calloc(products_count, sizeof(struct product));
-	struct product_info* products_info = (struct product_info*)calloc(products_count, sizeof(struct product_info));
 	unsigned int* cart = (unsigned int*)calloc(products_count, sizeof(unsigned int));
 
 	initProductList(products, products_count);
-	initProductInfoList(products_info, products, products_count);
 	unsigned int is_exit = 0;
+
 	while (!is_exit) {
 		printActionList();
 		size_t now_action = enterAction();
 		switch (now_action) {
 		case 1:
-			addToProducts(products_info, products, &products_count);
+			addToProducts(products, &products_count);
 			cart = (unsigned int*)realloc(cart, products_count * sizeof(unsigned int));
 			cart[products_count - 1] = 0;
 			break;
 		case 2:
 			printProductList(products, products_count);
-			scanProduct(selectProduct(products_count), products, products_info, products_count);
+			printProductInfo(products[selectProduct(products_count)]);
 			break;
 		case 3:
 			printProductList(products, products_count);
 			addToCart(selectProduct(products_count), cart);
 			break;
 		case 4:
-			printReceipt(cart, products_info, products_count);
+			printReceipt(cart, products, products_count);
 			is_exit = selectIsExit();
 			if (!is_exit) {
 				for (size_t i = 0; i < products_count; ++i) {
@@ -266,6 +243,5 @@ void main() {
 	}
 
 	free(products);
-	free(products_info); //In Debug causes _CrtIsValidHeapPointer(block) visual studio error
 	free(cart);
 }
