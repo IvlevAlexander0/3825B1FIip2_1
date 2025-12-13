@@ -1,16 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <stdlib.h>
-
-//Вопросы:
-/*
-Прочитал про такую штуку, как  интернирование строк. Там строковый литерал пихается в read-only data, а указатель получает адрес начала этого литерала.
-Из этого вопросы:
-1.  char* str = "Old str";
-	str = "New Str"; //Память утекла?
-2. Можем ли мы подобные вещи делать с массивами. Можем ли мы вообще изменятб указатель массива, который указывает на первый элемент?
-*/
 
 struct product {
 	char barcode[5];
@@ -62,12 +54,24 @@ void initProductInfoList(struct product_info* products_info, struct product* pro
 	products_info[4].discount = 15;
 }
 
-void printProductList(struct product* products, size_t products_count) {
-	printf("===[PRODUCTS]===\n");
-	for (size_t i = 0; i < products_count; ++i) {
-		printf("%zu. %s\n", i + 1, products[i].name);
+void printActionList() {
+	printf("===[ACTIONS]===\n");
+	printf("1. Add product\n");
+	printf("2. Scan product\n");
+	printf("3. Scan product and add to cart\n");
+	printf("4. Print receipt\n\n");
+}
+
+size_t enterAction() {
+	size_t action_num = 1;
+	printf("Enter action number: ");
+	while (!scanf("%zu", &action_num) || action_num < 1 || action_num > 4) {
+		clearInput();
+		printf("Encorrect enter. Enter action number: ");
 	}
-	printf("\n");
+	clearInput();
+
+	return action_num;
 }
 
 unsigned char isFreeName(char* name, struct product* products, size_t products_count) {
@@ -134,7 +138,6 @@ void enterProductDiscount(unsigned char* discount) {
 	clearInput();
 }
 
-
 void addToProducts(struct product_info* products_info, struct product* products, size_t* products_count) {
 	*products_count += 1;
 
@@ -151,19 +154,12 @@ void addToProducts(struct product_info* products_info, struct product* products,
 	printf("--------------------------\n");
 }
 
-void addToCart(int* cart, int product_num) {
-	
-}
-
-void printProductInfo(struct product_info product_info) {
-	printf("%s ---------------- %u RUB | DISC: %hhu%%\n", product_info.name, product_info.price, product_info.discount);
-}
-
-void scanProduct(size_t product_num, struct product* products, struct product_info* products_info, size_t products_count) {
-	size_t product_index = 0;
-
-	for (product_index; strcmp(products_info[product_index].barcode, products[product_num - 1].barcode); ++product_index);
-	printProductInfo(products_info[product_index]);
+void printProductList(struct product* products, size_t products_count) {
+	printf("===[PRODUCTS]===\n");
+	for (size_t i = 0; i < products_count; ++i) {
+		printf("%zu. %s\n", i + 1, products[i].name);
+	}
+	printf("\n");
 }
 
 size_t selectProduct(size_t products_count) {
@@ -177,24 +173,58 @@ size_t selectProduct(size_t products_count) {
 	return product_num;
 }
 
-void printActionList() {
-	printf("===[ACTIONS]===\n");
-	printf("1. Add product\n");
-	printf("2. Scan product\n");
-	printf("3. Scan product and add to cart\n");
-	printf("4. Print receipt\n\n");
+void printProductInfo(struct product_info product_info) {
+	printf("%s ---------------- %u RUB | DISC: %hhu%%\n", product_info.name, product_info.price, product_info.discount);
 }
 
-size_t enterAction() {
-	size_t action_num = 1;
-	printf("Enter action number: ");
-	while (!scanf("%zu", &action_num) || action_num < 1 || action_num > 4) {
+void scanProduct(size_t product_num, struct product* products, struct product_info* products_info, size_t products_count) {
+	size_t product_index = 0;
+
+	for (product_index; strcmp(products_info[product_index].barcode, products[product_num - 1].barcode); ++product_index);
+	printProductInfo(products_info[product_index]);
+}
+
+void addToCart(int product_num, unsigned int* cart) {
+	cart[product_num - 1]++;
+}
+
+void printReceipt(unsigned int* cart, struct product_info* products_info, size_t products_count) {
+	printf("\n===[RECEIPT]===\n");
+	size_t number = 1;
+	float sum = 0;
+	float sum_disc = 0;
+	for (size_t i = 0; i < products_count; ++i) {
+		if (cart[i] > 0) {
+			printf("%zu. %-20s%u X %u RUB | DISC: %hhu%%\n", number, products_info[i].name, cart[i], products_info[i].price, products_info[i].discount);
+			printf("TOTAL PRICE: %.0f RUB\n", round(cart[i] * products_info[i].price * (1 - (float)products_info[i].discount / 100)));
+			sum += cart[i] * products_info[i].price;
+			sum_disc += cart[i] * products_info[i].price * (1 - (float)products_info[i].discount / 100);
+			number++;
+		}
+	}
+	printf("==================\n");
+	if (sum > 0) {
+		printf("RESULT: %.0f RUB\nTO PAY: %.0f RUB   TOTAL DISC: %.0f%%\n\n", round(sum), round(sum_disc), 100 - round(sum_disc / sum * 100));
+	}
+	else {
+		printf("CART EMPTY :(\n\n");
+	}
+}
+
+unsigned int selectIsExit() {
+	unsigned int is_exit = 0;
+
+	printf("Select action: \n");
+	printf("1. Start new receipt\n");
+	printf("2. Exit\n");
+	printf("Enter you choose: ");
+	while (!scanf("%u", &is_exit) || is_exit < 1 || is_exit > 2) {
 		clearInput();
-		printf("Encorrect enter. Enter action number: ");
+		printf("Encorrect enter. Enter you choose: ");
 	}
 	clearInput();
 
-	return action_num;
+	return is_exit - 1;
 }
 
 void main() {
@@ -205,30 +235,35 @@ void main() {
 
 	initProductList(products, products_count);
 	initProductInfoList(products_info, products, products_count);
-
-	while (1) {
+	unsigned int is_exit = 0;
+	while (!is_exit) {
 		printActionList();
 		size_t now_action = enterAction();
 		switch (now_action) {
 		case 1:
 			addToProducts(products_info, products, &products_count);
+			cart = (unsigned int*)realloc(cart, products_count * sizeof(unsigned int));
+			cart[products_count - 1] = 0;
 			break;
 		case 2:
 			printProductList(products, products_count);
 			scanProduct(selectProduct(products_count), products, products_info, products_count);
 			break;
 		case 3:
-
+			printProductList(products, products_count);
+			addToCart(selectProduct(products_count), cart);
 			break;
 		case 4:
-
+			printReceipt(cart, products_info, products_count);
+			is_exit = selectIsExit();
+			if (!is_exit) {
+				for (size_t i = 0; i < products_count; ++i) {
+					cart[i] = 0;
+				}
+			}
 			break;
 		}
 	}
-	
-
-	/*addToProducts(products_info, products, &products_count);
-	printProductInof(products_info, products_count);*/
 
 	free(products);
 	free(products_info); //In Debug causes _CrtIsValidHeapPointer(block) visual studio error
