@@ -79,9 +79,6 @@ double taylorExp(double x, int maxMembers, double epsilon, int* actualMembers) {
 double taylorLn(double x, int maxMembers, double epsilon, int* actualMembers) {
 	double result = 0.0;
 	int n = 0;
-	if (x <= -1.0 || x > 1.0) {
-		printf("The result may be inaccurate! You need to enter a value -1 < x <= 1\n");
-	}
 	double member = x;
 	result = member;
 	for (n = 1; n < maxMembers; n++) {
@@ -113,99 +110,29 @@ void modeMenu() {
 void singleCalculation() {
 	int choice;
 	int maxMembers;
-	int actualMembers;
+	int actualMembers = 0;
 	double x;
 	double epsilon;
 	double taylorResult;
-	double exactResult;
+	double exactResult = 0.0;
+	int scanfSymCount = 0;
 	taylorFunc taylor = NULL;
 
 	functionMenu();
-	scanf("%d", &choice);
-	while (choice < 1 || choice > 4) {
+	scanfSymCount = scanf("%d", &choice);
+	while (scanfSymCount != 1 || choice < 1 || choice > 4) {
 		printf("Error. Enter choice (1-4)\n");
 		clearInputBuffer();
-		scanf("%d", &choice);
+		scanfSymCount = scanf("%d", &choice);
 	}
 
 	printf("Enter x\n");
-	scanf("%lf", &x);
+	scanfSymCount = scanf("%lf", &x);
 
-	if (choice == 4 && (x <= -1.0 || x > 1.0)) {
-		printf("The Taylor series for ln(1+x) converges only for -1 < x <= 1. The result may be inaccurate!\n");
-	}
-
-	switch (choice) {
-	case 1: {
-		taylor = taylorSin;
-		exactResult = sin(x);
-		break;
-	}
-	case 2: {
-		taylor = taylorCos;
-		exactResult = cos(x);
-		break;
-	}
-	case 3: {
-		taylor = taylorExp;
-		exactResult = exp(x);
-		break;
-	}
-	case 4: {
-		taylor = taylorLn;
-		exactResult = log(1.0 + x);
-		break;
-	}
-	default: 
-		printf("Error\n");
-	}
-
-	printf("Enter epsilon (>=0.000001)\n");
-	scanf("%lf", &epsilon);
-	while (epsilon < 0.000001) {
-		printf("Error. Enter epsilon (>=0.000001)\n");
+	while (scanfSymCount != 1 || ( choice == 4 && (x <= -1.0 || x > 1.0))) {
+			printf("The Taylor series for ln(1+x) converges only for -1 < x <= 1. Enter value (-1 - 1)\n");
 		clearInputBuffer();
-		scanf("%lf", &epsilon);
-	}
-
-	printf("Enter the maximum number of terms(1-1000)\n");
-	scanf("%d", &maxMembers);
-	while (maxMembers < 1 || maxMembers > 1000) {
-		printf("Error. Enter the maximum number of terms(1-1000)\n");
-		clearInputBuffer();
-		scanf("%d", &maxMembers);
-	}
-
-	taylorResult = taylor(x, maxMembers, epsilon, &actualMembers);
-
-	printf("Exact result %lf\n", exactResult);
-	printf("Taylor result %lf\n", taylorResult);
-	printf("Difference %lf\n", fabs(taylorResult - exactResult));
-	printf("Actual members %d\n", actualMembers);
-}
-
-void serialExperiment() {
-	int choice;
-	int NMax;
-	double x;
-	int actualMembers;
-	double taylorResult;
-	double exactResult;
-	taylorFunc taylor = NULL;
-
-	functionMenu();
-	scanf("%d", &choice);
-	while (choice < 1 || choice > 4) {
-		printf("Error. Enter choice (1-4)\n");
-		clearInputBuffer();
-		scanf("%d", &choice);
-	}
-
-	printf("Enter x\n");
-	scanf("%lf", &x);
-
-	if (choice == 4 && (x <= -1.0 || x > 1.0)) {
-		printf("The Taylor series for ln(1+x) converges only for -1 < x <= 1. The result may be inaccurate!\n");
+		scanfSymCount = scanf("%lf", &x);
 	}
 
 	switch (choice) {
@@ -230,15 +157,91 @@ void serialExperiment() {
 		break;
 	}
 	default:
-		printf("Error\n");
+		return;
+	}
+
+	printf("Enter epsilon (>=0.000001)\n");
+	scanfSymCount = scanf("%lf", &epsilon);
+	while (scanfSymCount != 1 || epsilon < 0.000001) {
+		printf("Error. Enter epsilon (>=0.000001)\n");
+		clearInputBuffer();
+		scanfSymCount = scanf("%lf", &epsilon);
+	}
+
+	printf("Enter the maximum number of terms(1-1000)\n");
+	scanfSymCount = scanf("%d", &maxMembers);
+	while (scanfSymCount != 1 || maxMembers < 1 || maxMembers > 1000) {
+		printf("Error. Enter the maximum number of terms(1-1000)\n");
+		clearInputBuffer();
+		scanfSymCount = scanf("%d", &maxMembers);
+	}
+
+	taylorResult = taylor(x, maxMembers, epsilon, &actualMembers);
+
+	printf("Exact result %lf\n", exactResult);
+	printf("Taylor result %lf\n", taylorResult);
+	printf("Difference %lf\n", fabs(taylorResult - exactResult));
+	printf("Actual members %d\n", actualMembers);
+}
+
+void serialExperiment() {
+	int choice;
+	int NMax;
+	double x;
+	int actualMembers = 0;
+	double taylorResult;
+	double exactResult = 0.0;
+	int scanfSymCount = 0;
+	taylorFunc taylor = NULL;
+
+	functionMenu();
+	scanfSymCount = scanf("%d", &choice);
+	while (scanfSymCount != 1 || choice < 1 || choice > 4) {
+		printf("Error. Enter choice (1-4)\n");
+		clearInputBuffer();
+		scanfSymCount = scanf("%d", &choice);
+	}
+
+	printf("Enter x\n");
+	scanfSymCount = scanf("%lf", &x);
+
+	while (scanfSymCount != 1 || (choice == 4 && (x <= -1.0 || x > 1.0))) {
+		printf("The Taylor series for ln(1+x) converges only for -1 < x <= 1. Enter value (-1 - 1)\n");
+		clearInputBuffer();
+		scanfSymCount = scanf("%lf", &x);
+	}
+
+	switch (choice) {
+	case 1: {
+		taylor = taylorSin;
+		exactResult = sin(x);
+		break;
+	}
+	case 2: {
+		taylor = taylorCos;
+		exactResult = cos(x);
+		break;
+	}
+	case 3: {
+		taylor = taylorExp;
+		exactResult = exp(x);
+		break;
+	}
+	case 4: {
+		taylor = taylorLn;
+		exactResult = log(1.0 + x);
+		break;
+	}
+	default:
+		return;
 	}
 
 	printf("Enter number of experiments (1-25)\n");
-	scanf("%d", &NMax);
-	while (NMax < 1 || NMax > 25){
+	scanfSymCount = scanf("%d", &NMax);
+	while (scanfSymCount != 1 || NMax < 1 || NMax > 25){
 		printf("Error. Enter number of experiments (1-25)\n");
 		clearInputBuffer();
-		scanf("%d", &NMax);
+		scanfSymCount = scanf("%d", &NMax);
 	}
 
 	printf("Exact result %lf\n", exactResult);
@@ -252,9 +255,15 @@ void serialExperiment() {
 
 	int main() {
 		int modeChoice = 0;
+		int scanfSymCount = 0;
 		while (1) {  
-			modeMenu();     
-			scanf("%d", &modeChoice);  
+			modeMenu(); 
+			scanfSymCount = scanf("%d", &modeChoice);
+			while (scanfSymCount != 1 || modeChoice < 1 || modeChoice > 3) {
+				printf("Error. Enter mode (1-3)\n");
+				clearInputBuffer();
+				scanfSymCount = scanf("%d", &modeChoice);
+			}
 			switch (modeChoice) {
 			case 1: {
 				singleCalculation();
