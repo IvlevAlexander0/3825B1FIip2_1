@@ -1,4 +1,5 @@
-﻿#include <stdio.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #define PI 3.14159265358979323846
@@ -6,59 +7,49 @@ void cleanBuffer() {
     int a;
     while ((a = getchar()) != '\n' && a != EOF);
 }
-long long factorial(int n) {
-    long long result = 1;
-    for (int i = 1; i <= n; i++) {
-        result *= i;
-    }
-    return result;
-}
 double ssin(double x, double epsi, int max_terms, int* terms_used) {
     double sum = 0.0;
-    double term;
+    double term = x;
     int n = 0;
-
+    long long fact = 1;
     do {
-        term = pow(-1, n) * pow(x, 2 * n + 1) / factorial(2 * n + 1);
         sum += term;
         n++;
         if (n >= max_terms) {
             break;
-        }
-    } while (fabs(term) > epsi); 
+        }term = -term * x * x / ((2 * n) * (2 * n + 1));
+
+    } while (fabs(term) > epsi);
     *terms_used = n;
     return sum;
 }
 double ccos(double x, double epsi, int max_terms, int* terms_used) {
-    double sum = 0.0;
-    double term;
+    double sum = 1.0;
+    double term = x;
     int n = 0;
-
     do {
-        term = pow(-1, n) * pow(x, 2 * n) / factorial(2 * n);
         sum += term;
         n++;
-
         if (n >= max_terms) {
             break;
         }
+        term = -term * x * x / ((2 * n) * (2 * n - 1));
+
     } while (fabs(term) > epsi);
     *terms_used = n;
     return sum;
 }
 double eexp(double x, double epsi, int max_terms, int* terms_used) {
-    double sum = 0.0;
-    double term;
+    double sum = 1.0;
+    double term= x;
     int n = 0;
-
     do {
-        term = pow(x, n) / factorial(n);
         sum += term;
         n++;
-
         if (n >= max_terms) {
             break;
         }
+        term = term * x / n;
     } while (fabs(term) > epsi);
     *terms_used = n;
     return sum;
@@ -67,28 +58,23 @@ double aarccos(double x, double epsi, int max_terms, int* terms_used) {
     if (x < -1.0 || x > 1.0) {
         printf("Error: arccos(x) is defined only for x in [-1, 1]\n");
         *terms_used = 0;
-        return 0; 
+        return NAN;
     }
     double sum = PI / 2.0 - x;
-    double term;
+    double term = x;
+    double x_squared = x * x;
     int n = 1;
+    double coeff = 1.0;  
+
     do {
-        double chislitel = 1.0;
-        double znamenatel = 1.0;
-
-        for (int i = 1; i <= n; i++) {
-            chislitel *= (2 * i - 1);
-            znamenatel *= (2 * i);
-        }
-
-        double coeff = chislitel / znamenatel;
-        term = coeff * pow(x, 2 * n + 1) / (2 * n + 1);
         sum -= term;
         n++;
 
         if (n >= max_terms) {
             break;
         }
+        coeff = coeff * (2 * n - 1) / (2 * n);
+        term = coeff * term * x_squared * (2 * n - 1) / (2 * n + 1);
     } while (fabs(term) > epsi);
     *terms_used = n;
     return sum;
@@ -105,14 +91,17 @@ void one_raschet() {
     printf("3. exp(x)\n");
     printf("4. arccos(x)\n");
     printf("Your choice: ");
-    while (scanf("%d", &c) != 1 || c < 1 || c > 3) {
+    while (scanf("%d", &c) != 1 || c < 1 || c > 4) {
         printf("Error. Enter a number from 1 to 4\n");
         cleanBuffer();
     }
     printf("Enter x: ");
-    scanf("%lf", &x);
+    while (scanf("%lf", &x) != 1) {
+        printf("Error.\n");
+        cleanBuffer();
+    }
     printf("Enter the accuracy (for example, 0.0001): ");
-    while (scanf("%lf", &epsi) != 1 || epsi < 0.000001) {
+    while (scanf("%lf", &epsi) != 1 || epsi <= 0) {
         printf("Error.\n");
         cleanBuffer();
     }
@@ -158,7 +147,7 @@ void series_rashet() {
     double x;
     int n_max;
 
-    printf("\n SERIES EXPERIMENT ===\n");
+    printf("\n=== SERIES EXPERIMENT ===\n");
     printf("Select a function:\n");
     printf("1. sin(x)\n");
     printf("2. cos(x)\n");
@@ -182,7 +171,11 @@ void series_rashet() {
         printf("Error. Enter a number from 1 to 25: ");
         cleanBuffer();
     }
-    double ref_result;
+    if (c == 4 && (x < -1.0 || x > 1.0)) {
+        printf("Error: arccos(x) is defined only for x in [-1, 1]\n");
+        return;
+    }
+    double ref_result = 0.0;
     switch (c) {
     case 1: ref_result = sin(x); break;
     case 2: ref_result = cos(x); break;
@@ -198,7 +191,7 @@ void series_rashet() {
 
     for (int n = 1; n <= n_max; n++) {
         int terms_used;
-        double my_result;
+        double my_result = 0.0;
 
         double tiny_epsilon = 1e-50;
 
@@ -233,7 +226,7 @@ int main() {
         printf("2. Series experiment\n");
         printf("0. Exit\n");
         printf("Your choice: ");
-        while (scanf("%d", &c) != 1 || c <0 || c > 2) {
+        while (scanf("%d", &c) != 1 || c < 0 || c > 2) {
             printf("Error. Enter a valid number: ");
             cleanBuffer();
         }
