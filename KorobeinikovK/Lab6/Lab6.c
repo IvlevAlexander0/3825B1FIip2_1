@@ -10,7 +10,7 @@
 
 typedef long double (*tayf)(long double, int, int*);
 typedef long double (*reff)(long double);
-typedef struct func_info {
+typedef struct {
 	int id;
 	const char* name;
 	tayf tay_f;
@@ -36,8 +36,8 @@ void m_menu() {
 long double t_sin(long double x, int n, int* comp_elem) {
 	long double res = 0.0;
 	long double elem0 = x;
-	*comp_elem = 0;
 	int elem_num = 1;
+	*comp_elem = 0;
 	while (x > PI) x -= 2 * PI;
 	while (x < -PI) x += 2 * PI;
 	for (int i = 0; i < n; ++i) {
@@ -51,8 +51,8 @@ long double t_sin(long double x, int n, int* comp_elem) {
 long double t_cos(long double x, int n, int* comp_elem) {
 	long double res = 0.0;
 	long double elem0 = 1.0;
-	*comp_elem = 0;
 	int elem_num = 0;
+	*comp_elem = 0;
 	while (x > PI) x -= 2 * PI;
 	while (x < -PI) x += 2 * PI;
 	for (int i = 0; i < n; ++i) {
@@ -66,8 +66,8 @@ long double t_cos(long double x, int n, int* comp_elem) {
 long double t_exp(long double x, int n, int* comp_elem) {
 	long double res = 1.0;
 	long double elem0 = 1.0;
-	*comp_elem = 1;
 	int elem_num = 1;
+	*comp_elem = 1;
 	for (int i = 1; i < n; ++i) {
 		elem0 *= x / elem_num;
 		res += elem0;
@@ -84,8 +84,8 @@ long double t_arctg(long double x, int n, int* comp_elem) {
 	}
 	long double res = 0.0;
 	long double elem0 = x;
+	int elem_num = 1;	
 	*comp_elem = 0;
-	int elem_num = 1;
 	for (int i = 0; i < n; ++i) {
 		res += elem0;
 		elem_num += 2;
@@ -95,8 +95,69 @@ long double t_arctg(long double x, int n, int* comp_elem) {
 	return res;
 }
 //Osnv
+void calculate(func_info* func, long double x, long double eps, long double n) {
+	long double ref_val = func->ref_f(x);
+	long double res = 0.0;
+	long double elem0 = 1.0;
+	int comp_elem = 0;
+	switch (func->id) {
+	case 1://sin	
+		res = 0.0;
+		elem0 = x;
+		comp_elem = 0;
+		break;
+	case 2://cos
+		res = 0.0;
+		elem0 = 1.0;
+		comp_elem = 0;
+		break;
+	case 3://exp
+		res = 1.0;
+		elem0 = 1.0;
+		comp_elem = 1;
+		break;
+	case 4://atg
+		if (x < -1 || x > 1) {
+			printf("Error:x must be between -1 and 1!\n");
+			return;
+		}
+		res = 0.0;
+		elem0 = x;
+		comp_elem = 0;
+		break;
+	}
+	while (comp_elem < n) {
+		if (!(func->id == 3 && comp_elem == 0)) {
+			res += elem0;
+		}
+		comp_elem++;
+		if (ABS(elem0) < eps) {
+			break;
+		}
+		switch (func->id) {
+		case 1: // sin(x)
+			elem0 = -elem0 * x * x / ((2 * comp_elem) * (2 * comp_elem + 1));
+			break;
+		case 2: // cos(x)
+			elem0 = -elem0 * x * x / ((2 * comp_elem - 1) * (2 * comp_elem));
+			break;
+		case 3: // exp(x)
+			elem0 *= x / (comp_elem + 1);
+			break;
+		case 4: // arctg(x)
+			elem0 = -elem0 * x * x * (2 * comp_elem - 1) / (2 * comp_elem + 1);
+			break;
+		}
+	}
+	printf("=== Calculation results ===\n");
+	printf("Function: %s\n", func->name);
+	printf("Reference value: %Lf\n", ref_val);
+	printf("Calculated estimate: %Lf\n", res);
+	printf("Difference: %Lf\n", ABS(res - ref_val));
+	printf("Number of terms: %d\n", comp_elem);
+}
 //1
-void sin_culc(func_info func[], int count) {
+void sin_calc(func_info func[], int count) {
 	int f_c = 0, n = 0;
 	long double x = 0.0, eps = 0.0;
 	f_menu();
@@ -105,6 +166,7 @@ void sin_culc(func_info func[], int count) {
 		while (getchar() != '\n');
 		return;
 	}
+	func_info* sel_func = &func[f_c - 1];
 	printf("Enter point x:");
 	if (scanf("%Lf", &x) != 1) {
 		printf("x entered incorrectly!");
@@ -123,71 +185,7 @@ void sin_culc(func_info func[], int count) {
 		while (getchar() != '\n');
 		return;
 	}
-	long double ref_val = func[f_c - 1].ref_f(x);
-	long double res = 0.0;
-	long double elem0 = 1.0;
-	int comp_elem = 0;
-	int elem_num = 0;
-	switch (f_c) {
-	case 1://sin
-		elem0 = x;
-		elem_num = 1;
-		res = 0.0;
-		break;
-	case 2://cos
-		elem0 = 1.0;
-		elem_num = 0;
-		res = 0.0;
-		break;
-	case 3://exp
-		elem0 = 1.0;
-		elem_num = 0;
-		res = 1.0;
-		comp_elem = 1;
-		break;
-	case 4://atg
-		if (x < -1 || x > 1) {
-			printf("Error:x must be between -1 and 1!\n");
-			return;
-		}
-		elem0 = x;
-		elem_num = 1;
-		res = 0.0;
-		break;
-	}
-	while (comp_elem < n) {
-		if (f_c != 3 || comp_elem > 0) {
-			res += elem0;
-		}
-		comp_elem++;
-		if (ABS(elem0) < eps) {
-			break;
-		}
-		switch (f_c) {
-		case 1://sin
-			elem_num += 2;
-			elem0 = -elem0 * x * x / ((elem_num - 1) * elem_num);
-			break;
-		case 2://cos
-			elem_num += 2;
-			elem0 = -elem0 * x * x / ((elem_num - 1) * elem_num);
-			break;
-		case 3://exp
-			elem_num++;
-			elem0 *= x / elem_num;
-			break;
-		case 4://atg
-			elem_num += 2;
-			elem0 = -elem0 * x * x * (elem_num - 2) / elem_num;
-			break;
-		}
-	}
-	printf("=== Calculation results ===\n");
-	printf("Function: %s\n", func[f_c - 1].name);
-	printf("Reference value: %Lf\n", ref_val);
-	printf("Calculated estimate: %Lf\n", res);
-	printf("Difference: %Lf\n", ABS(res - ref_val));
-	printf("Number of terms: %d\n", comp_elem);
+	calculate(sel_func,x,eps,n);
 }
 
 //
@@ -201,6 +199,7 @@ void ser_exper(func_info func[], int count) {
 		while (getchar() != '\n');
 		return;
 	}
+	func_info* sel_func = &func[f_c - 1];
 	printf("Enter point x:");
 	if (scanf("%Lf", &x) != 1) {
 		printf("x entered incorrectly!");
@@ -213,16 +212,16 @@ void ser_exper(func_info func[], int count) {
 		while (getchar() != '\n');
 		return;
 	}
-	long double ref_val = func[f_c - 1].ref_f(x);
+	long double ref_val = sel_func->ref_f(x);
 	printf("=== Results of a serial experiment ===\n");
-	printf("Function: %s\n", func[f_c - 1].name);
+	printf("Function: %s\n", sel_func->name);
 	printf("Reference value: %Lf\n", ref_val);
 	printf("--------------------------------------------------------\n");
 	printf("|   Terms   |      Eval.values     |        Diff        \n");
 	printf("|-----------|----------------------|--------------------\n");
 	for (int nm = 1; nm <= ex; ++nm) {
 		int comp_elem = 0;
-		long double res = func[f_c - 1].tay_f(x, nm, &comp_elem);
+		long double res = sel_func->tay_f(x, nm, &comp_elem);
 		if (isnan(res)) {
 			printf("| %9d |Calculation error|No data\n", comp_elem);
 			continue;
@@ -245,7 +244,7 @@ int main() {
 		}
 		switch (m_c) {
 		case 1:
-			sin_culc(func, count);
+			sin_calc(func, count);
 			break;
 		case 2:
 			ser_exper(func, count);
