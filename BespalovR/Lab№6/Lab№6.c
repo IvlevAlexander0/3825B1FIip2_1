@@ -141,7 +141,7 @@ int main() {
     case 1: {
 
 
-        printf("Input x.\n");
+        printf("Input x.(for arccos x must be in [-1;1])\n");
         long double x;
         while (scanf("%Lf", &x) != 1) {
             printf("Incorrect input. Please try again.\n");
@@ -150,9 +150,9 @@ int main() {
         }
 
 
-        printf("Input EPS.\n");
+        printf("Input EPS.(>=1e-16)\n");
         long double eps;
-        while (scanf("%Lf", &eps) != 1 || eps < 0.000001) {
+        while (scanf("%Lf", &eps) != 1 || eps < 1e-16) {
             printf("Incorrect input. Please try again.\n");
             char c;
             while ((c = getchar()) != '\n') {}
@@ -168,10 +168,10 @@ int main() {
         }
 
         if (lf_fnc(eps, n, x, i_count) != EOF) {
-            printf("%Lf\n", fnc(x));
-            printf("%Lf\n", lf_fnc(eps, n, x, i_count));
-            printf("%Lf\n", fabsl(lf_fnc(eps, n, x, i_count) - fnc(x)));
-            printf("%zu\n", i);
+            printf("Math.h funstion: %Lf\n", fnc(x));
+            printf("My function: %Lf\n", lf_fnc(eps, n, x, i_count));
+            printf("Difference: %Lf\n", fabsl(lf_fnc(eps, n, x, i_count) - fnc(x)));
+            printf("Deg. of Teilor series: %zu\n", i);
         }
         else {
             printf("Incorrect input. x must be in [-1;1].\n");
@@ -183,7 +183,7 @@ int main() {
     case 2: {
 
 
-        printf("Input x.\n");
+        printf("Input x.(for arccos x must be in [-1;1])\n");
         long double x;
         while (scanf("%Lf", &x) != 1) {
             printf("Incorrect input. Please try again.\n");
@@ -201,8 +201,8 @@ int main() {
         }
         if (lf_fnc(0, 0, x, i_count) != EOF) {
             for (size_t n = 1; n < nmax + 1; ++n) {
-                printf("%Lf\n", fnc(x));
-                printf("%zu\t%Lf\t%Lf\n", n, lf_fnc(0, n, x, i_count), fabsl(lf_fnc(0, n, x, i_count) - fnc(x)));
+                printf("Math.h function: %Lf\n", fnc(x));
+                printf("Deg. of Teilor series: %zu\tMy function: %Lf\tDifference: %Lf\n\n", n, lf_fnc(0, n, x, i_count), fabsl(lf_fnc(0, n, x, i_count) - fnc(x)));
             }
         }
         else {
