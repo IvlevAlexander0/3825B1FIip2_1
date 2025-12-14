@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <math.h>
-
+//Я не понимаю, не вижу что не так со значением функций. досдам в среду.
 long double lf_sin(long double eps, size_t n, long double x, size_t *i_count) {
     long double res = 0;
     long double term = x; 
@@ -58,6 +58,13 @@ long double lf_arccos(long double eps, size_t n, long double x, size_t *i_count)
     if (x < -1 || x > 1) {
         return EOF;
     }
+    // значения в точках -1 и 1 отличны от функции math.h но какбудто это связанно с недостаточной точностью вычислений и числа пи
+    /*if (x == -1) {
+        return 3.1415926535897932;
+    }
+    if (x == 1) {
+        return 0;
+    }*/
     long double res = 3.1415926535897932/2;
     long double term = x;
     long double x_squared = x * x;
@@ -149,7 +156,7 @@ int main() {
         }
 
 
-        printf("Input EPS.(>=1e-16)\n");
+        printf("Input EPS.(mustn't be less than 1e-6)\n");
         long double eps;
         while (scanf("%Lf", &eps) != 1 || eps < 1e-6) {
             printf("Incorrect input. Please try again.\n");
@@ -167,10 +174,10 @@ int main() {
         }
 
         if (lf_fnc(eps, n, x, i_count) != EOF) {
-            printf("Math.h funstion: %Lf\n", fnc(x));
+            printf("Math.h function: %Lf\n", fnc(x));
             printf("My function: %Lf\n", lf_fnc(eps, n, x, i_count));
             printf("Difference: %Lf\n", fabsl(lf_fnc(eps, n, x, i_count) - fnc(x)));
-            printf("Deg. of Teilor series: %zu\n", i);
+            printf("Deg. of Taylor series: %zu\n", i);
         }
         else {
             printf("Incorrect input. x must be in [-1;1].\n");
@@ -191,9 +198,9 @@ int main() {
         }
 
 
-        printf("Input nmax.(must be integer in [1;1000])\n");
+        printf("Input nmax.(must be integer in [1;25])\n");
         size_t nmax;
-        while (scanf("%zu", &nmax) != 1 || nmax < 1 || nmax > 1000) {
+        while (scanf("%zu", &nmax) != 1 || nmax < 1 || nmax > 25) {
             printf("Incorrect input. Please try again.\n");
             char c;
             while ((c = getchar()) != '\n') {}
@@ -201,7 +208,7 @@ int main() {
         if (lf_fnc(0, 0, x, i_count) != EOF) {
             for (size_t n = 1; n < nmax + 1; ++n) {
                 printf("Math.h function: %Lf\n", fnc(x));
-                printf("Deg. of Teilor series: %zu\tMy function: %Lf\tDifference: %Lf\n\n", n, lf_fnc(0, n, x, i_count), fabsl(lf_fnc(0, n, x, i_count) - fnc(x)));
+                printf("Deg. of Taylor series: %zu\tMy function: %Lf\tDifference: %Lf\n\n", n, lf_fnc(0, n, x, i_count), fabsl(lf_fnc(0, n, x, i_count) - fnc(x)));
             }
         }
         else {
