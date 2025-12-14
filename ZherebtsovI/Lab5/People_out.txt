@@ -1,0 +1,11 @@
+NoName 228
+Igor 100
+Kostya 93
+Dima 78
+Pasha 56
+Ann 39
+Alex 38
+Oleg 34
+Ilya 28
+Sergey 21
+Roman 12
