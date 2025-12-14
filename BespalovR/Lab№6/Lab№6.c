@@ -1,11 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS
+#define pi 3.1415926535897932
 #include <stdio.h>
 #include <math.h>
-//Я не понимаю, не вижу что не так со значением функций. досдам в среду.
+long double norm_x(long double x) {
+    return fmodl(fabsl(x), 2 * pi);
+}
 long double lf_sin(long double eps, size_t n, long double x, size_t *i_count) {
     long double res = 0;
-    long double term = x; 
-    long double x_squared = x * x;
+    long double term = norm_x(x);
+    long double x_squared = norm_x(x) * norm_x(x);
     short int sign = 1;
     *i_count = 0;
     for (size_t i = 0; i < n; ++i) {
@@ -14,9 +17,9 @@ long double lf_sin(long double eps, size_t n, long double x, size_t *i_count) {
         if (fabsl(term) < eps) {
             break;
         }
-        term *= x_squared;
         term /= (2 * i + 2);
         term /= (2 * i + 3);
+        term *= x_squared;
         sign *= -1;
     }
     return res;
@@ -24,7 +27,7 @@ long double lf_sin(long double eps, size_t n, long double x, size_t *i_count) {
 long double lf_cos(long double eps, size_t n, long double x, size_t *i_count) {
     long double res = 0;
     long double term = 1;
-    long double x_squared = x * x;
+    long double x_squared = norm_x(x) * norm_x(x);
     short int sign = 1;
     *i_count = 0;
     for (size_t i = 0; i < n; ++i) {
@@ -33,9 +36,9 @@ long double lf_cos(long double eps, size_t n, long double x, size_t *i_count) {
         if (fabsl(term) < eps) {
             break;
         }
-        term *= x_squared;
         term /= (2 * i + 1);
         term /= (2 * i + 2);
+        term *= x_squared;
         sign *= -1;
     }
     return res;
@@ -50,7 +53,8 @@ long double lf_exp(long double eps, size_t n, long double x, size_t *i_count) {
         if (fabsl(term) < eps) {
             break;
         }
-        term *= x/(i + 1);
+        term /= (i + 1);
+        term *= x;
     }
     return res;
 }
@@ -65,7 +69,7 @@ long double lf_arccos(long double eps, size_t n, long double x, size_t *i_count)
     if (x == 1) {
         return 0;
     }*/
-    long double res = 3.1415926535897932/2;
+    long double res = pi/2;
     long double term = x;
     long double x_squared = x * x;
     *i_count = 0;
@@ -75,11 +79,11 @@ long double lf_arccos(long double eps, size_t n, long double x, size_t *i_count)
         if (fabsl(term) < eps) {
             break;
         }
+        term /= (2 * i + 2);
+        term /= (2 * i + 3);
         term *= x_squared;
         term *= (2 * i + 1);
         term *= (2 * i + 1);
-        term /= (2 * i + 2);
-        term /= (2 * i + 3);
     }
     return res;
 }
