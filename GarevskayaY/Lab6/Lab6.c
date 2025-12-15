@@ -48,9 +48,6 @@ double taylorCos(double x, int maxMembers, double epsilon, int* actualMembers) {
 }
 
 double taylorExp(double x, int maxMembers, double epsilon, int* actualMembers) {
-    while (x > PI) x -= 2 * PI;
-    while (x < -PI) x += 2 * PI;
-    
     double result = 1.0;
     double term = 1.0;
     int n = 1;
