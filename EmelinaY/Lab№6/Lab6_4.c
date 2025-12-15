@@ -8,76 +8,63 @@ void cleanBuffer() {
     while ((a = getchar()) != '\n' && a != EOF);
 }
 double ssin(double x, double epsi, int max_terms, int* terms_used) {
-    double sum = 0.0;
     double term = x;
-    int n = 0;
-    long long fact = 1;
-    do {
+    double sum = term;
+    int n = 1;
+    while (n < max_terms && fabs(term) > epsi) {
+        term = -term * x * x / ((2 * n) * (2 * n + 1));
         sum += term;
         n++;
-        if (n >= max_terms) {
-            break;
-        }term = -term * x * x / ((2 * n) * (2 * n + 1));
-
-    } while (fabs(term) > epsi);
+    }
     *terms_used = n;
     return sum;
 }
 double ccos(double x, double epsi, int max_terms, int* terms_used) {
-    double sum = 1.0;
-    double term = x;
-    int n = 0;
-    do {
+    double term = 1.0;
+    double sum = term;
+    int n = 1;
+    while (n < max_terms && fabs(term) > epsi) {
+        term = -term * x * x / ((2 * n-1) * (2 * n));
         sum += term;
         n++;
-        if (n >= max_terms) {
-            break;
-        }
-        term = -term * x * x / ((2 * n) * (2 * n - 1));
-
-    } while (fabs(term) > epsi);
+    }
     *terms_used = n;
     return sum;
 }
 double eexp(double x, double epsi, int max_terms, int* terms_used) {
-    double sum = 1.0;
-    double term= x;
-    int n = 0;
-    do {
+    double term = 1.0;
+    double sum = term;
+    int n = 1;
+    while (n < max_terms && fabs(term) > epsi) {
+        term = term * x /n;
         sum += term;
         n++;
-        if (n >= max_terms) {
-            break;
-        }
-        term = term * x / n;
-    } while (fabs(term) > epsi);
+    }
     *terms_used = n;
     return sum;
 }
 double aarccos(double x, double epsi, int max_terms, int* terms_used) {
+    double arcsin;
+    double arccos;
     if (x < -1.0 || x > 1.0) {
-        printf("Error: arccos(x) is defined only for x in [-1, 1]\n");
         *terms_used = 0;
         return NAN;
     }
-    double sum = PI / 2.0 - x;
-    double term = x;
-    double x_squared = x * x;
-    int n = 1;
-    double coeff = 1.0;  
+    if (fabs(x) <= 1) {
+        double term = x;
+        arcsin = term;
+        int iter = 1;
 
-    do {
-        sum -= term;
-        n++;
-
-        if (n >= max_terms) {
-            break;
+        while (iter < max_terms && fabs(term) > epsi) {
+            term = term * x * x * (2 * iter - 1) * (2 * iter - 1) / ((2 * iter) * (2 * iter + 1));
+            arcsin += term;
+            iter++;
         }
-        coeff = coeff * (2 * n - 1) / (2 * n);
-        term = coeff * term * x_squared * (2 * n - 1) / (2 * n + 1);
-    } while (fabs(term) > epsi);
-    *terms_used = n;
-    return sum;
+        *terms_used = iter;
+        arccos = PI / 2 - arcsin;
+    }
+
+    return arccos;
 }
 void one_raschet() {
     int c;
@@ -193,7 +180,7 @@ void series_rashet() {
         int terms_used;
         double my_result = 0.0;
 
-        double tiny_epsilon = 1e-50;
+        double tiny_epsilon = 1e-15;
 
         switch (c) {
         case 1:
