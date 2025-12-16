@@ -130,6 +130,12 @@ unsigned char selectIsExit() {
 	return is_exit - 1;
 }
 
+void copyArray(struct Person* dist, struct Person* source, size_t size) {
+	for (size_t i = 0; i < size; ++i) {
+		dist[i] = source[i];
+	}
+}
+
 void main() {
 	unsigned char is_exit = 0;
 	struct Person persons[50] = { 0 };
@@ -141,26 +147,29 @@ void main() {
 
 		clock_t start = 0;
 		clock_t end = 0;
+		struct Person copy_persons[50] = {0};
+		
+		copyArray(copy_persons, persons, persons_count);
 
 		switch (selectSortType()) {
 		case 1:
 			start = clock();
-			quickSort(persons, 0, persons_count - 1);
+			quickSort(copy_persons, 0, persons_count - 1);
 			end = clock();
 			break;
 		case 2:
 			start = clock();
-			selectionSortPersons(persons, persons_count);
+			selectionSortPersons(copy_persons, persons_count);
 			end = clock();
 			break;
 		case 3:
 			start = clock();
-			insertionSortPersons(persons, persons_count);
+			insertionSortPersons(copy_persons, persons_count);
 			end = clock();
 			break;
 		}
 
-		writePersons(persons, persons_count, OUTPUT_FILE);
+		writePersons(copy_persons, persons_count, OUTPUT_FILE);
 		printf("\nTime: %lf\n\n", (double)(end - start) / CLOCKS_PER_SEC);
 		is_exit = selectIsExit();
 	}
