@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS 
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #define INPUT_FILE "People_in.txt"
 #define OUTPUT_FILE "People_out.txt"
@@ -15,30 +16,17 @@ void swap(struct Person* a, struct Person* b) {
 	*b = temp;
 }
 
-void bubbleSortPersons(struct Person* persons, size_t persons_count) {
-	char is_swap = 1;
-	for (size_t i = 0; i < persons_count && is_swap; ++i) {
-		is_swap = 0;
-		for (size_t j = 1; j < persons_count - i; ++j) {
-			if (persons[j - 1].age < persons[j].age) {
-				swap(&persons[j - 1], &persons[j]);
-				is_swap = 1;
-			}
-		}
-	}
-}
-
 void selectionSortPersons(struct Person* persons, size_t persons_count) {
 	for (size_t i = 0; i < persons_count - 1; ++i) {
-		size_t min_ind = i;
+		size_t max_ind = i;
 
 		for (size_t j = i; j < persons_count; ++j) {
-			if (persons[min_ind].age > persons[j].age) {
-				min_ind = j;
+			if (persons[max_ind].age < persons[j].age) {
+				max_ind = j;
 			}
 		}
 
-		swap(&persons[min_ind], &persons[i]);
+		swap(&persons[max_ind], &persons[i]);
 	}
 }
 
@@ -47,6 +35,39 @@ void insertionSortPersons(struct Person* persons, size_t persons_count) {
 		for (size_t j = i; persons[j].age > persons[j - 1].age; --j) {
 				swap(&persons[j], &persons[j-1]);        
 		}
+	}
+}
+
+size_t partition(struct Person* persons, int low, int hight) {
+	unsigned int pivot = persons[low].age;
+	int i = low - 1;
+	int j = hight + 1;
+
+	while (1) {
+		do {
+			i++;
+		} while (persons[i].age > pivot);
+
+		do {
+			j--;
+		} while (persons[j].age < pivot);
+
+		if (i >= j) {
+			return j;
+		}
+
+		swap(&persons[low], &persons[hight]);
+	}
+}
+
+void quickSort(struct Person* persons, int low, int hight) {
+	srand(time(0));
+
+	if (low < hight) {
+		size_t pivot = partition(persons, low, hight);
+
+		quickSort(persons, low, pivot);
+		quickSort(persons, pivot + 1, hight);
 	}
 }
 
@@ -80,7 +101,7 @@ unsigned char selectSortType() {
 	unsigned char sort_num = 0;
 
 	printf("===[SELECT SORT]===\n");
-	printf("1. Bubble sort\n");
+	printf("1. Quick sort\n");
 	printf("2. Selection sort\n");
 	printf("3. Insertion sort\n\n");
 	printf("Enter sort number: ");
@@ -111,12 +132,12 @@ unsigned char selectIsExit() {
 
 void main() {
 	unsigned char is_exit = 0;
+	struct Person persons[50] = { 0 };
+	size_t persons_count = 0;
+
+	readPersons(persons, &persons_count, INPUT_FILE);
 
 	while (!is_exit) {
-		struct Person persons[50] = { 0 };
-		size_t persons_count = 0;
-
-		readPersons(persons, &persons_count, INPUT_FILE);
 
 		clock_t start = 0;
 		clock_t end = 0;
@@ -124,7 +145,7 @@ void main() {
 		switch (selectSortType()) {
 		case 1:
 			start = clock();
-			bubbleSortPersons(persons, persons_count);
+			quickSort(persons, 0, persons_count - 1);
 			end = clock();
 			break;
 		case 2:

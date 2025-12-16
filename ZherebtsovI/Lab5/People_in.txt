@@ -1,11 +1,11 @@
 Roman 12
-Oleg 34
 Sergey 21
-Ann 39
-Dima 78
 Ilya 28
+Oleg 34
 Alex 38
+Ann 39
 Pasha 56
+Dima 78
 Kostya 93
 Igor 100
 NoName 228
