@@ -9,6 +9,20 @@ void menu(){
 	printf("5 - to check the cheque and to start a new cheque\n");
 	printf("6 - to complete the work\n");
 }
+int checkingcode(char arr[]) {
+	if (strlen(arr) != 4) {
+		printf("The barcode should contain exactly 4 numbers\n");
+		return 0;
+	}
+	for (int i = 0; i < 4; i++) {
+		if (arr[i] < '0' || arr[i] > '9') {
+			printf("Incorrect barcode. Try again\n");
+			return 0;
+		}
+	}
+	return 1;
+}
+
 void copy(char a[], char b[]) {
 	int i = 0;
 	while (a[i] != '\0') {
@@ -31,14 +45,23 @@ int compare(char a[], char b[]) {
 	return 0;
 }
 void addpr(char names[][50], char code[][5], int prices[], int discounts[], int c, int* prt) {
+	if (*prt >= 20) {
+		printf("Maximum number of products reached\n");
+		return;
+	}
 	printf("Enter barcode of a new product: ");
 	
 	char temp[5] = { 0 };
 	do {
 		int proverka = 0;
-		scanf("%s", temp);
+		scanf("%4s", temp);
+		if (checkingcode(temp) == 0) {
+			while (getchar() != '\n');
+			continue;
+		}
+		while (getchar() != '\n');
 		proverka = 0;
-		for (int i = 0; i < c; i++) {
+		for (int i = 0; i < *prt; i++) {
 			if (compare(code[i], temp) == 1) {
 				proverka = 1;
 				break;
@@ -46,12 +69,7 @@ void addpr(char names[][50], char code[][5], int prices[], int discounts[], int 
 			
 		}
 		
-		if (strlen(temp) != 4) {
-			printf("ERROR: code should contain exactly 4 symbols\n");
-			printf("Try again: ");
-			continue;
-		}
-		else if (proverka == 1) {
+		if (proverka == 1) {
 			printf("Such product has been added. Enter the another barcode: ");
 		}
 		else {
@@ -60,13 +78,13 @@ void addpr(char names[][50], char code[][5], int prices[], int discounts[], int 
 		}
 	} while (1);
 	printf("Enter the name of the product: ");
-	scanf("%s", names[*prt]);
-	
+	scanf("%49s", names[*prt]);
+	while (getchar() != '\n');
 	do {
 		printf("Enter the price of the product: ");
 		int check = scanf("%d", &prices[*prt]);
-		if (prices[c] < 0 || check != 1) {
-			printf("ERROR: the price cannot be negative.\n");
+		if (prices[*prt] < 0 || check != 1) {
+			printf("ERROR: the price was entered incorrectly.\n");
 			while (getchar() != '\n');
 			continue;
 		}
@@ -78,7 +96,11 @@ void addpr(char names[][50], char code[][5], int prices[], int discounts[], int 
 	do {
 		printf("Enter the discount of the product: ");
 		int check = scanf("%d", &discounts[*prt]);
-		if ((discounts[*prt] > 50 || discounts[*prt] < 0) || check != 1) {
+		while (getchar() != '\n');
+		if (check != 1) {
+			printf("ERROR: enter a number\n");
+		}
+		else if ((discounts[*prt] > 50 || discounts[*prt] < 0)) {
 			printf("ERROR: The discount should be between 0 and 50%.\n");
 			while (getchar() != '\n');
 			continue;
@@ -93,8 +115,19 @@ void scandescription(char names[][50], char code[][5], int prices[], int discoun
 	char arr[5] = { '0' };
 	int check = 0;
 	printf("Enter the barcode of the product: ");
-	scanf("%s", arr);
-	for (int i = 0; i < c; i++) {
+	do {
+		scanf("%4s", arr);
+		while (getchar() != '\n');
+		if (checkingcode(arr) == 0) {
+			continue;
+		}
+		else {
+			break;
+		}
+
+	} while (1);
+	
+	for (int i = 0; i < c && i < 20; i++) {
 		if (compare(arr, code[i]) == 1) {
 			printf("The product: %s\n", names[i]);
 			printf("The price: %d\n", prices[i]);
@@ -105,15 +138,28 @@ void scandescription(char names[][50], char code[][5], int prices[], int discoun
 		}
 	}
 	if (check != 1) {
-		printf("Such product has not been added. Enter another: \n");		
+		printf("Such product has not been added. Choose the mode again to enter another barcode \n");		
 	}
 }
 void scancheck(char names[][50], char code[][5], int prices[], int discounts[], int c, char names1[][50], char code1[][5], int prices1[], int discounts1[], int* prt) {
+	if (*prt >= 20) {
+		printf("Maximum number of products reached\n");
+		return;
+	}
 	char arr[5] = { '0' };
 	int poisk = 0;
 	printf("Enter the barcode of the product: ");
-	scanf("%s", arr);
-	for (int i = 0; i < c; i++) {
+	do {
+		scanf("%4s", arr);
+		while (getchar() != '\n');
+		if (checkingcode(arr) == 0) {
+			continue;
+		}
+		else {
+			break;
+		}
+	} while (1);
+	for (int i = 0; i < c && i < 20; i++) {
 
 		if (compare(arr, code[i]) == 1) {
 
